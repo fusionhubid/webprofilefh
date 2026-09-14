@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg0: #0f1115;
+  --bg1: #161922;
+  --bg2: #1e222d;
+  --bg3: #2a2f3e;
+  --primary: #D61A20;
+  --primary-light: #f7353b;
+  --primary-pale: #ff8c90;
+  --primary-dim: #8a1014;
+  --secondary: #FF6600;
+  --secondary-light: #ff8533;
+  --cream: #ffffff;
+  --ivory: #f2f3f7;
+  --warm-gray: #8a8d9b;
+  --muted: #5a5d6a;
+  --text-body: #b8bac7;
+}
+
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+body {
+  background: var(--bg0);
+  color: var(--cream);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+::selection { background: rgba(214, 26, 32, 0.3); color: var(--cream); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--primary-dim) var(--bg1); }
