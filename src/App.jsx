@@ -254,7 +254,7 @@ function Services() {
     ["01","Bundle One Solution","Solusi sistem enterprise menyeluruh (ERP) yang mengintegrasikan seluruh departemen dalam satu platform tersentralisasi.","Full Stack"],
     ["02","HRIS","Manajemen data karyawan, payroll, absensi terintegrasi biometrik, KPI, hingga proses rekrutmen.","Modular"],
     ["03","IT-Inventory INSW","Pelacakan stok perangkat keras & lunak IT, manajemen lisensi, serta pemantauan life-cycle perangkat perusahaan.","Modular"],
-    ["04","Production Tracker","Monitoring jalur produksi real-time, manajemen efisiensi (OEE), dan kontrol kualitas manufaktur.","Modular"],
+    ["05","ProcureFlow","Digitalisasi alur persetujuan PO, manajemen vendor, hingga otomasi invoice (Procure-to-Pay).","Modular"],
     ["06","Asset Management System","Pencatatan depresiasi, jadwal pemeliharaan (maintenance), dan barcode tracking untuk semua aset fisik berharga.","Modular"],
   ];
   return (
