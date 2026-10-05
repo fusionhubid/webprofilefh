@@ -1,5 +1,123 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import inventory1 from './assets/inventory_1.png';
+import inventory2 from './assets/inventory_2.png';
+import inventory3 from './assets/inventory_3.png';
+import inventory4 from './assets/inventory_4.png';
+import inventory5 from './assets/inventory_5.png';
+
+function GalleryModal({ images, onClose }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0,0,0,0.9)",
+        zIndex: 9990,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
+      }}
+    >
+      <button
+        onClick={onClose}
+        data-hover
+        style={{
+          position: "absolute",
+          top: "2rem",
+          right: "2rem",
+          background: "transparent",
+          border: "none",
+          color: "white",
+          fontSize: "2.5rem",
+          cursor: "none",
+          zIndex: 9991
+        }}
+      >
+        &times;
+      </button>
+
+      <div style={{ position: "relative", width: "80%", maxWidth: "1200px", height: "70vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <button
+          onClick={() => setCurrentIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))}
+          data-hover
+          style={{
+            position: "absolute",
+            left: "-4rem",
+            background: "transparent",
+            border: "none",
+            color: "white",
+            fontSize: "3rem",
+            cursor: "none"
+          }}
+        >
+          &#10094;
+        </button>
+        
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={images[currentIndex]}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "8px" }}
+          />
+        </AnimatePresence>
+
+        <button
+          onClick={() => setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))}
+          data-hover
+          style={{
+            position: "absolute",
+            right: "-4rem",
+            background: "transparent",
+            border: "none",
+            color: "white",
+            fontSize: "3rem",
+            cursor: "none"
+          }}
+        >
+          &#10095;
+        </button>
+      </div>
+      
+      <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+        {images.map((img, idx) => (
+          <div
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            style={{
+              width: "80px",
+              height: "50px",
+              backgroundImage: `url(${img})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              borderRadius: "4px",
+              cursor: "pointer",
+              border: currentIndex === idx ? "2px solid var(--primary)" : "2px solid transparent",
+              opacity: currentIndex === idx ? 1 : 0.5,
+              transition: "all 0.3s"
+            }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 
 function Cursor() {
   const x = useMotionValue(-100);
@@ -250,6 +368,7 @@ function About() {
 
 function Services() {
   const [activeIdx, setActiveIdx] = useState(null);
+  const [showGallery, setShowGallery] = useState(false);
   const svcs = [
     ["01","Bundle One Solution","Solusi sistem enterprise menyeluruh (ERP) yang mengintegrasikan seluruh departemen dalam satu platform tersentralisasi.","Full Stack"],
     ["02","HRIS","Manajemen data karyawan, payroll, absensi terintegrasi biometrik, KPI, hingga proses rekrutmen.","Modular"],
@@ -280,14 +399,18 @@ function Services() {
               <motion.div
                 onHoverStart={() => setActiveIdx(i)}
                 onHoverEnd={() => setActiveIdx(null)}
+                onClick={() => { if(i === 2) setShowGallery(true); }}
                 animate={{ background: activeIdx === i ? "var(--bg2)" : "var(--bg1)" }}
                 transition={{ duration:0.3 }}
-                style={{ display:"grid", gridTemplateColumns:"80px 1fr 1fr auto", alignItems:"center", gap:"3rem", padding:"2.5rem 3rem", position:"relative", cursor:"default" }}>
+                style={{ display:"grid", gridTemplateColumns:"80px 1fr 1fr auto", alignItems:"center", gap:"3rem", padding:"2.5rem 3rem", position:"relative", cursor: i === 2 ? "pointer" : "default" }}>
                 <motion.div animate={{ scaleY: activeIdx === i ? 1 : 0 }}
                   style={{ position:"absolute", left:0, top:0, bottom:0, width:"4px", background:"var(--secondary)", transformOrigin:"bottom" }}
                   transition={{ duration:0.35 }} />
                 <div style={{ fontSize:"2.2rem", fontWeight:800, color:"rgba(214,26,32,0.2)" }}>{num}</div>
-                <div style={{ fontSize:"1.4rem", fontWeight:700, color:"var(--ivory)" }}>{name}</div>
+                <div style={{ fontSize:"1.4rem", fontWeight:700, color:"var(--ivory)" }}>
+                  {name}
+                  {i === 2 && <span style={{ marginLeft: "1rem", fontSize: "0.7rem", color: "var(--primary-light)", background: "rgba(214,26,32,0.1)", padding: "0.2rem 0.6rem", borderRadius: "4px" }}>Lihat Screenshot</span>}
+                </div>
                 <div style={{ fontSize:"0.85rem", lineHeight:1.8, color:"var(--warm-gray)" }}>{desc}</div>
                 <motion.div animate={{ borderColor: activeIdx === i ? "var(--secondary)" : "var(--primary-dim)", color: activeIdx === i ? "var(--secondary-light)" : "var(--primary-light)", background: activeIdx === i ? "rgba(255,102,0,0.1)" : "transparent" }}
                   style={{ fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", border:"1px solid", borderRadius:"4px", padding:"0.5rem 1.2rem", whiteSpace:"nowrap", textAlign:"center", transition:"0.3s" }}>
@@ -298,6 +421,14 @@ function Services() {
           ))}
         </div>
       </div>
+      <AnimatePresence>
+        {showGallery && (
+          <GalleryModal
+            images={[inventory1, inventory2, inventory3, inventory4, inventory5]}
+            onClose={() => setShowGallery(false)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
