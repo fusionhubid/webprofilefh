@@ -714,10 +714,35 @@ function Contact() {
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: "", role: "", company: "", phone: "", module: "Bundle One Solution", message: "" });
 
-  const handleSend = () => {
-    const text = `Halo tim FUSION HUB! Saya tertarik untuk Request Demo.%0A%0A*Data Klien:*%0ANama: ${form.name}%0AJabatan: ${form.role}%0APerusahaan: ${form.company}%0ANo. WhatsApp: ${form.phone}%0A%0A*Modul Diminati:* ${form.module}%0A%0A*Pesan Tambahan:*%0A${form.message}`;
-    const waNumber = "6281234567890"; // Ganti dengan nomor WA Anda
-    window.open(`https://wa.me/${waNumber}?text=${text}`, "_blank");
+  const handleSend = (e) => {
+    if (e) e.preventDefault();
+    if (!form.name.trim()) {
+      alert("Silakan isi Nama Lengkap terlebih dahulu.");
+      return;
+    }
+
+    const messageTemplate = 
+`Halo Tim FUSION HUB! 👋
+Saya ingin mengajukan *Request Demo* sistem.
+
+📋 *Data Calon Klien:*
+• *Nama:* ${form.name.trim()}
+• *Posisi / Jabatan:* ${form.role.trim() || "-"}
+• *Perusahaan:* ${form.company.trim() || "-"}
+• *No. WhatsApp:* ${form.phone.trim() || "-"}
+
+🚀 *Modul yang Diminati:*
+• ${form.module}
+
+💬 *Catatan / Kebutuhan Tambahan:*
+${form.message.trim() ? form.message.trim() : "-"}
+
+Mohon informasi ketersediaan jadwal demo. Terima kasih!`;
+
+    const waNumber = "62895321643665";
+    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(messageTemplate)}`;
+    
+    window.open(waUrl, "_blank");
     setSent(true);
   };
   return (
@@ -764,7 +789,7 @@ function Contact() {
                     <Field label="Nama Perusahaan" placeholder="PT Teknologi Nusantara" value={form.company} onChange={e => setForm({...form, company: e.target.value})} />
                   </div>
                   <div className="contact-row">
-                    <Field label="Nomor WhatsApp" placeholder="+62 8xx..." value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+                    <Field label="Nomor WhatsApp" placeholder="08xx-xxxx-xxxx" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
                     <div>
                       <label style={{ display:"block", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)", marginBottom:"0.5rem" }}>Modul Diminati</label>
                       <select value={form.module} onChange={e => setForm({...form, module: e.target.value})} style={{ width:"100%", background:"var(--bg1)", border:"1px solid rgba(214,26,32,0.2)", borderRadius:"6px", color:"var(--cream)", fontFamily:"inherit", fontSize:"0.95rem", padding:"0.9rem 1rem", outline:"none" }}>
