@@ -1,14 +1,116 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useInView, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
-import inventory1 from './assets/inventory_1.png';
-import inventory2 from './assets/inventory_2.png';
-import inventory3 from './assets/inventory_3.png';
-import inventory4 from './assets/inventory_4.png';
-import inventory5 from './assets/inventory_5.png';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  Cpu,
+  TrendingUp,
+  Users,
+  Database,
+  Activity,
+  FileText,
+  Box,
+  ArrowUpRight,
+  CheckCircle2,
+  ShieldCheck,
+  Sparkles,
+  Image as ImageIcon,
+  ArrowRight,
+  RefreshCw,
+  Check
+} from "lucide-react";
+import inventory1 from "./assets/inventory_1.png";
+import inventory2 from "./assets/inventory_2.png";
+import inventory3 from "./assets/inventory_3.png";
+import inventory4 from "./assets/inventory_4.png";
+import inventory5 from "./assets/inventory_5.png";
 
-function GalleryModal({ images, onClose }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const INVENTORY_IMAGES = [
+  { src: inventory1, title: "Portal Login & Keamanan Captcha Fusion Hub" },
+  { src: inventory2, title: "Dashboard Saldo Awal & Cleansing Data INSW" },
+  { src: inventory3, title: "Modul Penerimaan Barang & Integrasi Dokumen" },
+  { src: inventory4, title: "Manajemen Stock Opname Terintegrasi" },
+  { src: inventory5, title: "Laporan Adjustment & Rekonsiliasi Stok" }
+];
+
+/* =========================================================
+   PRESERVED SVG LOGO ANIMATION
+   ========================================================= */
+function LogoAnimation({ size = 240, style = {} }) {
+  return (
+    <div className="logo-wrapper" style={{ width: size, maxWidth: "100%", height: "auto", flexShrink: 0, ...style }}>
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ferrariRed" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#E60000" />
+            <stop offset="100%" stopColor="#990000" />
+          </linearGradient>
+          <linearGradient id="mclarenOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FF8000" />
+            <stop offset="100%" stopColor="#FF3300" />
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <path
+          className="shield-path"
+          d="M 100 20 C 140 20, 175 35, 175 55 C 175 120, 130 165, 100 180 C 70 165, 25 120, 25 55 C 25 35, 60 20, 100 20 Z"
+          fill="none"
+          stroke="url(#ferrariRed)"
+          strokeWidth="10"
+          strokeLinejoin="round"
+        />
+        <g className="swirl-group">
+          <path
+            className="swirl-path"
+            d="M 100 25 C 140 25, 160 70, 125 100 C 110 118, 90 105, 100 100"
+            fill="none"
+            stroke="url(#ferrariRed)"
+            strokeWidth="18"
+            strokeLinecap="round"
+          />
+          <path
+            className="swirl-path"
+            d="M 175 100 C 175 140, 130 160, 100 125 C 82 110, 95 90, 100 100"
+            fill="none"
+            stroke="url(#mclarenOrange)"
+            strokeWidth="18"
+            strokeLinecap="round"
+          />
+          <path
+            className="swirl-path"
+            d="M 100 175 C 60 175, 40 130, 75 100 C 90 82, 110 95, 100 100"
+            fill="none"
+            stroke="url(#ferrariRed)"
+            strokeWidth="18"
+            strokeLinecap="round"
+          />
+          <path
+            className="swirl-path"
+            d="M 25 100 C 25 60, 70 40, 100 75 C 118 90, 105 110, 100 100"
+            fill="none"
+            stroke="url(#mclarenOrange)"
+            strokeWidth="18"
+            strokeLinecap="round"
+          />
+        </g>
+        <circle className="core-node" cx="100" cy="100" r="10" fill="#FFFFFF" filter="url(#glow)" />
+        <circle className="core-node" cx="100" cy="100" r="6" fill="#FF8000" />
+      </svg>
+    </div>
+  );
+}
+
+/* =========================================================
+   GALLERY MODAL (SCREENSHOT VIEWER)
+   ========================================================= */
+function GalleryModal({ images, initialIndex = 0, onClose }) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -21,21 +123,22 @@ function GalleryModal({ images, onClose }) {
   }, [images.length, onClose]);
 
   if (!images || images.length === 0) return null;
+  const currentItem = images[currentIndex];
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       className="gallery-modal-overlay"
       onClick={onClose}
     >
-      {/* Top Bar with Title and Close button */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           width: "100%",
-          maxWidth: "1100px",
+          maxWidth: "1080px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -43,28 +146,32 @@ function GalleryModal({ images, onClose }) {
           padding: "0 0.5rem"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ fontSize: "clamp(0.8rem, 2.5vw, 0.95rem)", fontWeight: 700, color: "var(--ivory)", letterSpacing: "0.05em" }}>
-            Fusion Hub IT-Inventory
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "clamp(0.85rem, 2.5vw, 1rem)", fontWeight: 700, color: "#FFFFFF" }}>
+            {currentItem.title}
           </span>
-          <span style={{
-            fontSize: "0.7rem",
-            color: "var(--warm-gray)",
-            background: "rgba(255,255,255,0.08)",
-            padding: "0.2rem 0.6rem",
-            borderRadius: "20px"
-          }}>
+          <span
+            style={{
+              fontSize: "0.72rem",
+              fontFamily: "var(--font-mono)",
+              color: "#FF8000",
+              background: "rgba(255, 102, 0, 0.15)",
+              border: "1px solid rgba(255, 102, 0, 0.3)",
+              padding: "0.2rem 0.65rem",
+              borderRadius: "20px",
+              fontWeight: 600
+            }}
+          >
             {currentIndex + 1} / {images.length}
           </span>
         </div>
 
         <button
           onClick={onClose}
-          data-hover
           aria-label="Close modal"
           style={{
-            background: "rgba(255, 255, 255, 0.1)",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
+            background: "rgba(255, 255, 255, 0.12)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
             color: "white",
             width: "38px",
             height: "38px",
@@ -72,40 +179,31 @@ function GalleryModal({ images, onClose }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer",
-            transition: "all 0.2s"
+            cursor: "pointer"
           }}
         >
           <X size={20} />
         </button>
       </div>
 
-      {/* Main Image Stage */}
-      <div
-        className="gallery-stage"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Left Arrow Button */}
+      <div className="gallery-stage" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={() => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
-          data-hover
           aria-label="Previous image"
           style={{
             position: "absolute",
             left: "0.5rem",
-            background: "rgba(15, 17, 21, 0.8)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
+            background: "rgba(15, 23, 42, 0.85)",
+            border: "1px solid rgba(255, 255, 255, 0.25)",
             color: "white",
-            width: "42px",
-            height: "42px",
+            width: "44px",
+            height: "44px",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            zIndex: 10,
-            backdropFilter: "blur(6px)",
-            transition: "all 0.2s"
+            zIndex: 10
           }}
         >
           <ChevronLeft size={24} />
@@ -114,79 +212,74 @@ function GalleryModal({ images, onClose }) {
         <AnimatePresence mode="wait">
           <motion.img
             key={currentIndex}
-            src={images[currentIndex]}
-            alt={`Fusion Hub Screenshot ${currentIndex + 1}`}
-            initial={{ opacity: 0, scale: 0.96 }}
+            src={currentItem.src}
+            alt={currentItem.title}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.18 }}
             style={{
               maxWidth: "100%",
               maxHeight: "100%",
               objectFit: "contain",
-              borderRadius: "8px",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.6)"
+              borderRadius: "10px",
+              boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+              border: "1px solid rgba(255,255,255,0.12)"
             }}
           />
         </AnimatePresence>
 
-        {/* Right Arrow Button */}
         <button
           onClick={() => setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
-          data-hover
           aria-label="Next image"
           style={{
             position: "absolute",
             right: "0.5rem",
-            background: "rgba(15, 17, 21, 0.8)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
+            background: "rgba(15, 23, 42, 0.85)",
+            border: "1px solid rgba(255, 255, 255, 0.25)",
             color: "white",
-            width: "42px",
-            height: "42px",
+            width: "44px",
+            height: "44px",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            zIndex: 10,
-            backdropFilter: "blur(6px)",
-            transition: "all 0.2s"
+            zIndex: 10
           }}
         >
           <ChevronRight size={24} />
         </button>
       </div>
 
-      {/* Thumbnails Row */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           display: "flex",
-          gap: "0.6rem",
-          marginTop: "1.2rem",
+          gap: "0.65rem",
+          marginTop: "1.1rem",
           maxWidth: "100%",
           overflowX: "auto",
           padding: "0.4rem 0.5rem"
         }}
       >
-        {images.map((img, idx) => (
-          <div
+        {images.map((item, idx) => (
+          <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
-            data-hover
             style={{
-              width: "60px",
-              height: "38px",
+              width: "68px",
+              height: "44px",
               flexShrink: 0,
-              backgroundImage: `url(${img})`,
+              backgroundImage: `url(${item.src})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              borderRadius: "4px",
+              borderRadius: "6px",
               cursor: "pointer",
-              border: currentIndex === idx ? "2px solid var(--primary)" : "1px solid rgba(255,255,255,0.2)",
-              opacity: currentIndex === idx ? 1 : 0.45,
-              transition: "all 0.25s",
-              transform: currentIndex === idx ? "scale(1.05)" : "scale(1)"
+              border: currentIndex === idx ? "2px solid var(--secondary)" : "1px solid rgba(255,255,255,0.25)",
+              opacity: currentIndex === idx ? 1 : 0.5,
+              transition: "all 0.2s",
+              transform: currentIndex === idx ? "scale(1.06)" : "scale(1)"
             }}
           />
         ))}
@@ -195,230 +288,202 @@ function GalleryModal({ images, onClose }) {
   );
 }
 
-function Cursor() {
-  const [enabled, setEnabled] = useState(false);
-  const x = useMotionValue(-100);
-  const y = useMotionValue(-100);
-  const sx = useSpring(x, { stiffness: 400, damping: 35 });
-  const sy = useSpring(y, { stiffness: 400, damping: 35 });
-  const [hovered, setHovered] = useState(false);
-
-  useEffect(() => {
-    const checkPointer = () => {
-      // Only enable custom cursor if fine pointer (mouse) and screen width > 900px
-      const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-      setEnabled(isFinePointer && window.innerWidth > 900);
-    };
-    checkPointer();
-    window.addEventListener("resize", checkPointer);
-
-    const move = (e) => { x.set(e.clientX); y.set(e.clientY); };
-    const over = (e) => { if (e.target.closest("a,button,[data-hover]")) setHovered(true); };
-    const out = () => setHovered(false);
-
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseover", over);
-    window.addEventListener("mouseout", out);
-
-    return () => {
-      window.removeEventListener("resize", checkPointer);
-      window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseover", over);
-      window.removeEventListener("mouseout", out);
-    };
-  }, []);
-
-  if (!enabled) return null;
-
-  return (
-    <>
-      <motion.div style={{ left: sx, top: sy, x: "-50%", y: "-50%", position:"fixed", borderRadius:"50%", border:"0.5px solid rgba(214,26,32,0.7)", pointerEvents:"none", zIndex:9999 }}
-        animate={{ width: hovered ? 48 : 10, height: hovered ? 48 : 10 }}
-        transition={{ duration: 0.2 }} />
-      <motion.div style={{ left: sx, top: sy, x: "-50%", y: "-50%", position:"fixed", width:4, height:4, borderRadius:"50%", background:"var(--primary-light)", pointerEvents:"none", zIndex:9999 }} />
-    </>
-  );
-}
-
-function FadeUp({ children, delay = 0, style = {}, className = "" }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <motion.div ref={ref} style={style} className={className}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}>
-      {children}
-    </motion.div>
-  );
-}
-
+/* =========================================================
+   REUSABLE EYEBROW BADGE
+   ========================================================= */
 function Eyebrow({ children }) {
   return (
-    <div style={{ display:"flex", alignItems:"center", gap:"0.75rem", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.25em", textTransform:"uppercase", color:"var(--primary)", marginBottom:"1.25rem" }}>
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.6rem",
+        fontSize: "0.7rem",
+        fontWeight: 700,
+        letterSpacing: "0.14em",
+        textTransform: "uppercase",
+        color: "var(--primary)",
+        background: "var(--primary-light)",
+        border: "1px solid var(--primary-border)",
+        padding: "0.35rem 0.85rem",
+        borderRadius: "999px",
+        marginBottom: "1.15rem"
+      }}
+    >
+      <span
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, var(--primary), var(--secondary))"
+        }}
+      />
       {children}
-      <span style={{ display:"block", width:"24px", height:"2px", background:"var(--primary)", flexShrink: 0 }} />
     </div>
   );
 }
 
-function LogoAnimation({ size = 240, style = {} }) {
-  return (
-    <div className="logo-wrapper" style={{ width: size, maxWidth: "100%", height: "auto", flexShrink: 0, ...style }}>
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="ferrariRed" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#E60000" />
-            <stop offset="100%" stopColor="#800000" />
-          </linearGradient>
-          <linearGradient id="mclarenOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FF8000" />
-            <stop offset="100%" stopColor="#FF3300" />
-          </linearGradient>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-        <path className="shield-path" d="M 100 20 C 140 20, 175 35, 175 55 C 175 120, 130 165, 100 180 C 70 165, 25 120, 25 55 C 25 35, 60 20, 100 20 Z" 
-              fill="none" stroke="url(#ferrariRed)" strokeWidth="10" strokeLinejoin="round"/>
-        <g className="swirl-group">
-          <path className="swirl-path" d="M 100 25 C 140 25, 160 70, 125 100 C 110 118, 90 105, 100 100" fill="none" stroke="url(#ferrariRed)" strokeWidth="18" strokeLinecap="round" />
-          <path className="swirl-path" d="M 175 100 C 175 140, 130 160, 100 125 C 82 110, 95 90, 100 100" fill="none" stroke="url(#mclarenOrange)" strokeWidth="18" strokeLinecap="round" />
-          <path className="swirl-path" d="M 100 175 C 60 175, 40 130, 75 100 C 90 82, 110 95, 100 100" fill="none" stroke="url(#ferrariRed)" strokeWidth="18" strokeLinecap="round" />
-          <path className="swirl-path" d="M 25 100 C 25 60, 70 40, 100 75 C 118 90, 105 110, 100 100" fill="none" stroke="url(#mclarenOrange)" strokeWidth="18" strokeLinecap="round" />
-        </g>
-        <circle className="core-node" cx="100" cy="100" r="10" fill="#FFFFFF" filter="url(#glow)"/>
-        <circle className="core-node" cx="100" cy="100" r="6" fill="#FF8000"/>
-      </svg>
-    </div>
-  );
-}
-
+/* =========================================================
+   NAVIGATION BAR
+   ========================================================= */
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn);
+    const fn = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  const links = [["#tentang","Tentang"],["#layanan","Layanan"],["#proses","Proses"],["#kontak","Hubungi Kami"]];
+  const links = [
+    ["#tentang", "Tentang"],
+    ["#layanan", "Lini Solusi"],
+    ["#proses", "Implementasi"],
+    ["#kontak", "Request Demo"]
+  ];
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, ease: [0.16,1,0.3,1] }}
+      <header
         className="nav-header"
         style={{
-          background: scrolled || menuOpen ? "rgba(15,17,21,0.97)" : "transparent",
-          borderBottom: scrolled || menuOpen ? "0.5px solid rgba(214,26,32,0.12)" : "none",
-          backdropFilter: scrolled || menuOpen ? "blur(14px)" : "none"
+          background: scrolled || menuOpen ? "var(--bg-glass)" : "rgba(255, 255, 255, 0.7)",
+          borderBottom: scrolled || menuOpen ? "1px solid var(--border-subtle)" : "1px solid transparent",
+          backdropFilter: "blur(12px)",
+          boxShadow: scrolled ? "var(--shadow-sm)" : "none"
         }}
       >
-        <a href="#" style={{ display: "flex", alignItems: "center", gap: "0.85rem", textDecoration: "none" }}>
-          <LogoAnimation size={44} />
+        <a href="#" style={{ display: "flex", alignItems: "center", gap: "0.8rem", textDecoration: "none" }}>
+          <LogoAnimation size={42} />
           <div>
-            <div style={{ fontWeight: 800, fontSize: "clamp(0.9rem, 3.5vw, 1.05rem)", letterSpacing: "0.2em", color: "var(--primary-light)", whiteSpace: "nowrap" }}>
-              FUSION<span style={{ color: "var(--secondary)" }}>HUB</span>
+            <div
+              style={{
+                fontWeight: 800,
+                fontSize: "clamp(0.95rem, 3vw, 1.1rem)",
+                letterSpacing: "0.14em",
+                color: "var(--ink-primary)",
+                whiteSpace: "nowrap"
+              }}
+            >
+              FUSION<span style={{ color: "var(--primary)" }}>HUB</span>
             </div>
-            <div style={{ fontSize: "0.42rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--muted)", marginTop: "0.15rem", whiteSpace: "nowrap" }}>
+            <div
+              style={{
+                fontSize: "0.52rem",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--ink-muted)",
+                marginTop: "0.1rem",
+                whiteSpace: "nowrap"
+              }}
+            >
               Integrated Business Solutions
             </div>
           </div>
         </a>
 
         {/* Desktop Links */}
-        <ul className="nav-desktop-links" style={{ gap: "2.5rem", listStyle: "none", alignItems: "center" }}>
-          {links.map(([href, label]) => (
-            <li key={href}>
-              <motion.a href={href} data-hover whileHover={{ color: "var(--primary-pale)" }}
-                style={{
-                  color: href === "#kontak" ? "var(--primary-light)" : "var(--warm-gray)",
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  border: href === "#kontak" ? "1px solid var(--primary-dim)" : "none",
-                  borderRadius: "4px",
-                  padding: href === "#kontak" ? "0.6rem 1.4rem" : "0",
-                  transition: "0.2s"
-                }}>
-                {label}
-              </motion.a>
-            </li>
-          ))}
+        <ul className="nav-desktop-links">
+          {links.map(([href, label]) => {
+            const isCTA = href === "#kontak";
+            return (
+              <li key={href}>
+                <a
+                  href={href}
+                  style={{
+                    color: isCTA ? "#FFFFFF" : "var(--ink-secondary)",
+                    background: isCTA
+                      ? "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)"
+                      : "transparent",
+                    fontSize: "0.78rem",
+                    letterSpacing: "0.04em",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    borderRadius: "8px",
+                    padding: isCTA ? "0.6rem 1.25rem" : "0.4rem 0.2rem",
+                    boxShadow: isCTA ? "0 4px 12px rgba(214, 26, 32, 0.22)" : "none",
+                    transition: "all 0.2s ease",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem"
+                  }}
+                >
+                  {label}
+                  {isCTA && <ArrowUpRight size={15} />}
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile Hamburger */}
         <button
           className="nav-mobile-btn"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation"
-          data-hover
           style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(214,26,32,0.3)",
-            borderRadius: "6px",
+            background: "var(--bg-subtle)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "8px",
             padding: "0.5rem",
-            color: "var(--cream)",
+            color: "var(--ink-primary)",
             cursor: "pointer"
           }}
         >
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
-      </motion.nav>
+      </header>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Dropdown */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
             style={{
               position: "fixed",
-              top: "60px",
+              top: "62px",
               left: 0,
               right: 0,
-              background: "rgba(15,17,21,0.98)",
-              borderBottom: "1px solid rgba(214,26,32,0.25)",
-              backdropFilter: "blur(16px)",
+              background: "#FFFFFF",
+              borderBottom: "1px solid var(--border-subtle)",
+              boxShadow: "var(--shadow-lg)",
               zIndex: 99,
-              padding: "1.25rem 1.25rem 1.75rem 1.25rem",
+              padding: "1.25rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.75rem"
+              gap: "0.65rem"
             }}
           >
-            {links.map(([href, label]) => (
-              <a
-                key={href}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                style={{
-                  color: href === "#kontak" ? "var(--primary-light)" : "var(--ivory)",
-                  fontSize: "0.85rem",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  padding: "0.85rem 1rem",
-                  borderRadius: "6px",
-                  background: href === "#kontak" ? "rgba(214,26,32,0.12)" : "rgba(255,255,255,0.02)",
-                  border: href === "#kontak" ? "1px solid var(--primary-dim)" : "1px solid rgba(255,255,255,0.05)",
-                  textAlign: "center"
-                }}
-              >
-                {label}
-              </a>
-            ))}
+            {links.map(([href, label]) => {
+              const isCTA = href === "#kontak";
+              return (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    color: isCTA ? "#FFFFFF" : "var(--ink-primary)",
+                    background: isCTA
+                      ? "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)"
+                      : "var(--bg-subtle)",
+                    fontSize: "0.9rem",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    padding: "0.85rem 1rem",
+                    borderRadius: "8px",
+                    border: isCTA ? "none" : "1px solid var(--border-subtle)",
+                    textAlign: "center"
+                  }}
+                >
+                  {label}
+                </a>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
@@ -426,199 +491,1229 @@ function Nav() {
   );
 }
 
-function Hero() {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start","end start"] });
-  const y = useTransform(scrollYProgress, [0,1], [0, 80]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const stats = [["99%","Uptime Sistem"],["24/7","Dukungan Teknis"]];
-  const stagger = { hidden:{}, show:{ transition:{ staggerChildren:0.12 }}};
-  const item = { hidden:{ opacity:0, y:25 }, show:{ opacity:1, y:0, transition:{ duration:0.8, ease:[0.16,1,0.3,1] }}};
+/* =========================================================
+   HERO SECTION WITH INTERACTIVE ECOSYSTEM TELEMETRY
+   ========================================================= */
+function Hero({ onSelectModuleForDemo }) {
+  const [activeNode, setActiveNode] = useState(1);
 
-  return (
-    <section ref={ref} className="hero-section">
-      <motion.div className="hero-left" style={{ y, opacity }}>
-        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 70% at 10% 60%, rgba(214,26,32,0.07) 0%, transparent 60%)", pointerEvents:"none" }} />
-        <motion.div variants={stagger} initial="hidden" animate="show" style={{ position:"relative", zIndex:1 }}>
-          <motion.div variants={item}>
-            <Eyebrow>Transformasi Digital Terpadu</Eyebrow>
-          </motion.div>
-          
-          <motion.div variants={item} style={{ marginBottom: "1.75rem" }}>
-            <h1 style={{ fontSize:"clamp(2.3rem, 6.8vw, 5.2rem)", fontWeight:800, lineHeight:1.12, color:"var(--ivory)", letterSpacing:"-0.02em", wordBreak: "normal" }}>
-              Solusi Bisnis<br />
-              <span style={{ color:"var(--primary)" }}>Masa Depan.</span>
-            </h1>
-          </motion.div>
-
-          <motion.p variants={item} style={{ fontSize:"clamp(0.88rem, 2.4vw, 1rem)", fontWeight:400, lineHeight:1.75, color:"var(--warm-gray)", maxWidth:"460px", marginBottom:"2.5rem" }}>
-            Kami memberdayakan ekosistem digital Anda dengan Bundle One Solution & Modul Kustom: HRIS, IT-Inventory, Production Tracker, ProcureFlow, hingga Asset Management System.
-          </motion.p>
-          <motion.div variants={item} className="hero-btn-group">
-            <motion.a href="#kontak" data-hover whileHover={{ background:"var(--primary-light)", scale:1.02 }} whileTap={{ scale:0.98 }}
-              style={{ display:"inline-block", textDecoration:"none", background:"var(--primary)", color:"var(--cream)", fontSize:"0.65rem", letterSpacing:"0.18em", textTransform:"uppercase", padding:"1.1rem 2.2rem", borderRadius:"6px", fontWeight:700, transition:"all 0.3s" }}>
-              Mulai Transformasi
-            </motion.a>
-            <motion.a href="#layanan" data-hover whileHover={{ borderColor:"var(--primary-light)", color:"var(--primary-light)" }}
-              style={{ display:"inline-block", textDecoration:"none", border:"1px solid var(--muted)", color:"var(--warm-gray)", fontSize:"0.65rem", letterSpacing:"0.18em", textTransform:"uppercase", padding:"1.1rem 2.2rem", borderRadius:"6px", fontWeight:600, transition:"all 0.3s" }}>
-              Jelajahi Solusi
-            </motion.a>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
-      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:1.2, delay:0.3 }}
-        className="hero-right">
-        
-        <div style={{ position:"absolute", top:0, left:0, right:0, height:"1px", background:"linear-gradient(to right, transparent, rgba(214,26,32,0.3), transparent)" }} />
-        
-        <div className="hero-logo-box">
-          <LogoAnimation size={360} style={{ width: "clamp(220px, 60vw, 360px)" }} />
-        </div>
-
-        <div className="hero-stats-grid">
-          {stats.map(([num, lbl], i) => (
-            <motion.div key={lbl} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}
-              transition={{ delay: 0.7 + i * 0.1, duration:0.8 }}
-              whileHover={{ background:"var(--bg2)" }}
-              className="hero-stat-card">
-              <div style={{ fontSize:"clamp(1.7rem, 4.5vw, 2.2rem)", fontWeight:800, color:"var(--secondary-light)", lineHeight:1 }}>{num}</div>
-              <div style={{ fontSize:"0.58rem", fontWeight:600, letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)", marginTop:"0.6rem" }}>{lbl}</div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
-function Divider() {
-  return (
-    <div style={{ display:"flex", alignItems:"center", padding:"0 clamp(1.25rem, 4vw, 5rem)" }}>
-      <div style={{ flex:1, height:"1px", background:"rgba(214,26,32,0.15)" }} />
-      <motion.div whileInView={{ rotate:225 }} initial={{ rotate:45 }} transition={{ duration:0.8 }}
-        style={{ width:"8px", height:"8px", border:"1px solid var(--primary-dim)", margin:"0 1rem", flexShrink: 0 }} />
-      <div style={{ flex:1, height:"1px", background:"rgba(214,26,32,0.15)" }} />
-    </div>
-  );
-}
-
-function About() {
-  const pillars = [
-    ["⚙️","Terintegrasi","Bundle One Solution mengikat seluruh proses operasional bisnis ke dalam satu ekosistem yang kohesif."],
-    ["🧩","Modular","Kustomisasi tanpa batas dengan modul spesifik yang bisa diadopsi sesuai kebutuhan saat ini."],
-    ["🚀","Skalabel","Infrastruktur IT yang siap mendukung pertumbuhan bisnis dari UKM hingga enterprise skala besar."],
+  const ecosystemNodes = [
+    {
+      id: 0,
+      label: "HRIS & Payroll",
+      metric: "Biometric & KPI Sync",
+      latency: "14ms",
+      status: "Synced",
+      color: "#D61A20"
+    },
+    {
+      id: 1,
+      label: "IT-Inventory INSW",
+      metric: "Regulasi Bea Cukai Live",
+      latency: "9ms",
+      status: "Active Stream",
+      color: "#FF6600"
+    },
+    {
+      id: 2,
+      label: "Production OEE",
+      metric: "Efisiensi Lini 98.4%",
+      latency: "11ms",
+      status: "Monitoring",
+      color: "#D61A20"
+    },
+    {
+      id: 3,
+      label: "ProcureFlow",
+      metric: "Auto PO & Vendor Approval",
+      latency: "16ms",
+      status: "Verified",
+      color: "#FF6600"
+    }
   ];
+
+  // Auto-cycle the telemetry highlight every 3.8s so the hub feels alive and purposeful
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveNode((prev) => (prev + 1) % ecosystemNodes.length);
+    }, 3800);
+    return () => clearInterval(timer);
+  }, [ecosystemNodes.length]);
+
+  const currentTelemetry = ecosystemNodes[activeNode];
+
   return (
-    <section id="tentang" className="section-pad">
-      <div className="about-grid">
-        <FadeUp>
-          <Eyebrow>Tentang Fusion Hub</Eyebrow>
-          <div style={{ fontSize:"clamp(3.5rem, 9vw, 8rem)", fontWeight:800, color:"rgba(214,26,32,0.06)", lineHeight:1, userSelect:"none", letterSpacing:"-0.05em" }}>01</div>
-        </FadeUp>
+    <section className="hero-section bg-grid-pattern">
+      {/* Left Column: Editorial Value Proposition */}
+      <div className="hero-left">
         <div>
-          <FadeUp delay={0.1}>
-            <h2 style={{ fontSize:"clamp(1.8rem, 4.5vw, 3.2rem)", fontWeight:700, lineHeight:1.25, color:"var(--ivory)", marginBottom:"1.5rem" }}>
-              Membangun Ekosistem <span style={{ color:"var(--primary)" }}>Digital</span> yang Solid untuk Bisnis Anda
-            </h2>
-          </FadeUp>
-          <FadeUp delay={0.15}>
-            <p style={{ fontSize:"0.9rem", lineHeight:1.85, color:"var(--text-body)", marginBottom:"1.25rem" }}>
-              FUSION HUB hadir sebagai pusat solusi integrasi bisnis. Kami mengerti bahwa operasional yang efisien membutuhkan teknologi yang adaptif. Itulah mengapa kami menyediakan pendekatan yang fleksibel untuk setiap perusahaan.
-            </p>
-            <p style={{ fontSize:"0.9rem", lineHeight:1.85, color:"var(--text-body)", marginBottom:"2.5rem" }}>
-              Pilih antara Bundle One Solution kami yang revolusioner atau sistem Modular yang presisi untuk membenahi alur kerja secara bertahap.
-            </p>
-          </FadeUp>
-          <div className="pillars-grid">
-            {pillars.map(([icon, name, desc], i) => (
-              <FadeUp key={name} delay={0.1 + i * 0.1}>
-                <motion.div whileHover={{ background:"var(--bg2)" }}
-                  style={{ background:"var(--bg0)", padding:"2rem 1.5rem", borderTop:"2px solid transparent", borderLeft:"1px solid rgba(214,26,32,0.08)", borderRight:"1px solid rgba(214,26,32,0.08)", borderBottom:"1px solid rgba(214,26,32,0.08)", height:"100%", cursor:"default", transition:"all 0.3s", borderRadius: "6px" }}
-                  onHoverStart={e => e.currentTarget.style.borderTopColor="var(--primary)"}
-                  onHoverEnd={e => e.currentTarget.style.borderTopColor="transparent"}>
-                  <div style={{ fontSize:"1.8rem", marginBottom:"1rem" }}>{icon}</div>
-                  <div style={{ fontSize:"1.15rem", fontWeight:700, color:"var(--ivory)", marginBottom:"0.6rem" }}>{name}</div>
-                  <div style={{ fontSize:"0.82rem", lineHeight:1.75, color:"var(--warm-gray)" }}>{desc}</div>
-                </motion.div>
-              </FadeUp>
+          <Eyebrow>Transformasi Digital Terpadu</Eyebrow>
+
+          <h1
+            style={{
+              fontSize: "clamp(2.35rem, 5.2vw, 4.35rem)",
+              fontWeight: 800,
+              lineHeight: 1.1,
+              color: "var(--ink-primary)",
+              letterSpacing: "-0.03em",
+              marginBottom: "1.5rem"
+            }}
+          >
+            Satu Pusat Kendali untuk{" "}
+            <span
+              style={{
+                background: "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+              }}
+            >
+              Operasional Bisnis.
+            </span>
+          </h1>
+
+          <p
+            style={{
+              fontSize: "clamp(0.95rem, 2vw, 1.08rem)",
+              lineHeight: 1.75,
+              color: "var(--ink-body)",
+              maxWidth: "520px",
+              marginBottom: "2.25rem"
+            }}
+          >
+            FUSION HUB menyatukan seluruh alur kerja perusahaan melalui{" "}
+            <strong style={{ color: "var(--ink-primary)", fontWeight: 600 }}>Bundle One Solution</strong> maupun{" "}
+            <strong style={{ color: "var(--ink-primary)", fontWeight: 600 }}>Modul Kustom</strong>: HRIS, IT-Inventory
+            INSW, Production Tracker, ProcureFlow, hingga Asset Management.
+          </p>
+
+          <div className="hero-btn-group" style={{ marginBottom: "2.75rem" }}>
+            <a
+              href="#kontak"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.6rem",
+                textDecoration: "none",
+                background: "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)",
+                color: "#FFFFFF",
+                fontSize: "0.85rem",
+                fontWeight: 700,
+                padding: "0.95rem 1.85rem",
+                borderRadius: "10px",
+                boxShadow: "var(--shadow-accent)",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease"
+              }}
+            >
+              Jadwalkan Demo Gratis
+              <ArrowRight size={17} />
+            </a>
+            <a
+              href="#layanan"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                textDecoration: "none",
+                background: "#FFFFFF",
+                border: "1px solid var(--border-strong)",
+                color: "var(--ink-primary)",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                padding: "0.95rem 1.75rem",
+                borderRadius: "10px",
+                boxShadow: "var(--shadow-sm)",
+                transition: "border-color 0.2s ease, background-color 0.2s ease"
+              }}
+            >
+              Eksplorasi 6 Modul
+            </a>
+          </div>
+
+          {/* Trust & Architecture Pills */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "1.25rem",
+              paddingTop: "1.5rem",
+              borderTop: "1px solid var(--border-subtle)"
+            }}
+          >
+            {[
+              ["INSW Ready", "Integrasi Regulasi Bea Cukai"],
+              ["Modular & ERP", "Adopsi Bertahap / Full Bundle"],
+              ["99.9% SLA", "Dukungan Teknis 24/7"]
+            ].map(([title, sub]) => (
+              <div key={title} style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
+                <CheckCircle2 size={17} color="var(--primary)" style={{ flexShrink: 0 }} />
+                <div style={{ fontSize: "0.78rem" }}>
+                  <span style={{ fontWeight: 700, color: "var(--ink-primary)" }}>{title}</span>{" "}
+                  <span style={{ color: "var(--ink-muted)" }}>— {sub}</span>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Right Column: Interactive Fusion Core Hub + Preserved SVG Logo */}
+      <div className="hero-right">
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "2rem 1.5rem",
+            position: "relative"
+          }}
+        >
+          {/* Interactive Ecosystem Container */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.85)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(214, 26, 32, 0.14)",
+              borderRadius: "24px",
+              padding: "clamp(1.25rem, 3vw, 2rem)",
+              width: "100%",
+              maxWidth: "480px",
+              boxShadow: "0 24px 48px -12px rgba(15, 23, 42, 0.08)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              position: "relative"
+            }}
+          >
+            {/* Top Status Header inside Card */}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1rem",
+                paddingBottom: "0.75rem",
+                borderBottom: "1px solid var(--border-subtle)"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    background: "#10B981",
+                    boxShadow: "0 0 0 3px rgba(16, 185, 129, 0.2)"
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "0.7rem",
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 600,
+                    color: "var(--ink-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em"
+                  }}
+                >
+                  FUSION CORE ENGINE v4.2
+                </span>
+              </div>
+              <span
+                style={{
+                  fontSize: "0.68rem",
+                  fontFamily: "var(--font-mono)",
+                  color: "var(--secondary)",
+                  background: "var(--secondary-light)",
+                  border: "1px solid var(--secondary-border)",
+                  padding: "0.15rem 0.55rem",
+                  borderRadius: "99px",
+                  fontWeight: 600
+                }}
+              >
+                LIVE SYNC
+              </span>
+            </div>
+
+            {/* Central Preserved Animated SVG Logo */}
+            <div style={{ position: "relative", margin: "0.5rem 0 1.25rem" }}>
+              <LogoAnimation size={220} style={{ width: "clamp(170px, 42vw, 220px)" }} />
+            </div>
+
+            {/* Interactive Module Nodes Selector (Click to inspect live telemetry) */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "0.6rem",
+                width: "100%",
+                marginBottom: "1rem"
+              }}
+            >
+              {ecosystemNodes.map((node, idx) => {
+                const isSelected = activeNode === idx;
+                return (
+                  <button
+                    key={node.id}
+                    onClick={() => setActiveNode(idx)}
+                    style={{
+                      background: isSelected ? "#FFFFFF" : "var(--bg-subtle)",
+                      border: isSelected ? `1.5px solid ${node.color}` : "1px solid var(--border-subtle)",
+                      borderRadius: "10px",
+                      padding: "0.65rem 0.8rem",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: isSelected ? "0 6px 16px -4px rgba(214, 26, 32, 0.14)" : "none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "0.5rem"
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          color: isSelected ? "var(--ink-primary)" : "var(--ink-secondary)"
+                        }}
+                      >
+                        {node.label}
+                      </div>
+                      <div style={{ fontSize: "0.65rem", color: "var(--ink-muted)", marginTop: "0.1rem" }}>
+                        {node.metric}
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        width: "7px",
+                        height: "7px",
+                        borderRadius: "50%",
+                        background: isSelected ? node.color : "var(--border-strong)",
+                        flexShrink: 0
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Live Animated Telemetry Feed Bar */}
+            <div
+              style={{
+                width: "100%",
+                background: "var(--ink-primary)",
+                color: "#FFFFFF",
+                borderRadius: "10px",
+                padding: "0.75rem 1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "0.75rem",
+                fontSize: "0.74rem",
+                fontFamily: "var(--font-mono)"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", overflow: "hidden" }}>
+                <RefreshCw size={14} color="#FF8000" style={{ flexShrink: 0 }} />
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentTelemetry.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                  >
+                    [{currentTelemetry.status}] {currentTelemetry.label} → Core
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+              <span style={{ color: "#FF8533", fontWeight: 700, flexShrink: 0 }}>{currentTelemetry.latency}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Stats Strip */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            borderTop: "1px solid var(--border-subtle)",
+            background: "#FFFFFF"
+          }}
+        >
+          <div style={{ padding: "1.35rem 2rem", borderRight: "1px solid var(--border-subtle)" }}>
+            <div
+              style={{
+                fontSize: "clamp(1.6rem, 3.5vw, 2.1rem)",
+                fontWeight: 800,
+                color: "var(--primary)",
+                fontFamily: "var(--font-mono)",
+                lineHeight: 1
+              }}
+            >
+              99.9%
+            </div>
+            <div
+              style={{
+                fontSize: "0.68rem",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "var(--ink-muted)",
+                marginTop: "0.4rem"
+              }}
+            >
+              Uptime Sistem Operasional
+            </div>
+          </div>
+          <div style={{ padding: "1.35rem 2rem" }}>
+            <div
+              style={{
+                fontSize: "clamp(1.6rem, 3.5vw, 2.1rem)",
+                fontWeight: 800,
+                color: "var(--secondary)",
+                fontFamily: "var(--font-mono)",
+                lineHeight: 1
+              }}
+            >
+              24/7
+            </div>
+            <div
+              style={{
+                fontSize: "0.68rem",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "var(--ink-muted)",
+                marginTop: "0.4rem"
+              }}
+            >
+              Dukungan Teknis & SLA
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 
-function Services() {
-  const [activeIdx, setActiveIdx] = useState(null);
-  const [showGallery, setShowGallery] = useState(false);
-  const svcs = [
-    ["01","Bundle One Solution","Solusi sistem enterprise menyeluruh (ERP) yang mengintegrasikan seluruh departemen dalam satu platform tersentralisasi.","Full Stack"],
-    ["02","HRIS","Manajemen data karyawan, payroll, absensi terintegrasi biometrik, KPI, hingga proses rekrutmen.","Modular"],
-    ["03","IT-Inventory INSW","Pelacakan stok perangkat keras & lunak IT, manajemen lisensi, serta pemantauan life-cycle perangkat perusahaan.","Modular"],
-    ["04","Production Tracker","Monitoring jalur produksi real-time, manajemen efisiensi (OEE), dan kontrol kualitas manufaktur.","Modular"],
-    ["05","ProcureFlow","Digitalisasi alur persetujuan PO, manajemen vendor, hingga otomasi invoice (Procure-to-Pay).","Modular"],
-    ["06","Asset Management System","Pencatatan depresiasi, jadwal pemeliharaan (maintenance), dan barcode tracking untuk semua aset fisik berharga.","Modular"],
+/* =========================================================
+   ABOUT SECTION (ARCHITECTURAL SWISS GRID)
+   ========================================================= */
+function About() {
+  const pillars = [
+    {
+      icon: Layers,
+      accent: "var(--primary)",
+      bg: "var(--primary-light)",
+      border: "var(--primary-border)",
+      name: "Terintegrasi Penuh",
+      desc: "Bundle One Solution mengikat seluruh proses lintas departemen ke dalam satu sumber data tunggal yang kohesif tanpa duplikasi input."
+    },
+    {
+      icon: Cpu,
+      accent: "var(--secondary)",
+      bg: "var(--secondary-light)",
+      border: "var(--secondary-border)",
+      name: "Arsitektur Modular",
+      desc: "Kustomisasi fleksibel dengan modul spesifik yang dapat diadopsi bertahap sesuai prioritas operasional perusahaan saat ini."
+    },
+    {
+      icon: TrendingUp,
+      accent: "var(--primary)",
+      bg: "var(--primary-light)",
+      border: "var(--primary-border)",
+      name: "Skalabel & Aman",
+      desc: "Infrastruktur siap mendukung pertumbuhan transaksi dari skala menengah hingga enterprise dengan standar keamanan berlapis."
+    }
   ];
+
   return (
-    <section id="layanan" style={{ background:"var(--bg1)", padding: "clamp(4.5rem, 8vw, 9rem) clamp(1.25rem, 4vw, 5rem)" }}>
-      <div style={{ maxWidth:"1400px", margin:"0 auto" }}>
-        <FadeUp>
-          <div className="services-header">
-            <div>
-              <Eyebrow>Produk & Layanan Kami</Eyebrow>
-              <h2 style={{ fontSize:"clamp(1.8rem, 4.5vw, 3.2rem)", fontWeight:800, color:"var(--ivory)" }}>
-                Lini Solusi <span style={{ color:"var(--primary)" }}>FUSION HUB</span>
-              </h2>
-            </div>
-            <p style={{ maxWidth:"320px", fontSize:"0.85rem", lineHeight:1.8, color:"var(--warm-gray)" }}>
-              Pilih paket lengkap atau integrasikan per modul sesuai dengan skala pertumbuhan Anda.
-            </p>
+    <section id="tentang" className="section-pad">
+      <div className="about-grid">
+        <div>
+          <Eyebrow>Tentang Fusion Hub</Eyebrow>
+          <div
+            style={{
+              fontSize: "clamp(3.2rem, 7vw, 5.5rem)",
+              fontWeight: 800,
+              fontFamily: "var(--font-mono)",
+              color: "rgba(214, 26, 32, 0.12)",
+              lineHeight: 1,
+              userSelect: "none"
+            }}
+          >
+            01
           </div>
-        </FadeUp>
-        <div style={{ display:"flex", flexDirection:"column", gap:"1px", background:"rgba(214,26,32,0.15)" }}>
-          {svcs.map(([num, name, desc, tag], i) => (
-            <FadeUp key={num} delay={i * 0.05}>
-              <motion.div
-                className="service-card"
-                onHoverStart={() => setActiveIdx(i)}
-                onHoverEnd={() => setActiveIdx(null)}
-                onClick={() => { if(i === 2) setShowGallery(true); }}
-                animate={{ background: activeIdx === i ? "var(--bg2)" : "var(--bg1)" }}
-                transition={{ duration:0.3 }}
-                style={{ position:"relative", cursor: i === 2 ? "pointer" : "default" }}>
-                <motion.div animate={{ scaleY: activeIdx === i ? 1 : 0 }}
-                  style={{ position:"absolute", left:0, top:0, bottom:0, width:"4px", background:"var(--secondary)", transformOrigin:"bottom" }}
-                  transition={{ duration:0.35 }} />
-                
-                <div style={{ fontSize:"clamp(1.6rem, 4vw, 2.2rem)", fontWeight:800, color:"rgba(214,26,32,0.3)" }}>{num}</div>
-                
-                <div style={{ fontSize:"clamp(1.1rem, 2.5vw, 1.35rem)", fontWeight:700, color:"var(--ivory)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.6rem" }}>
-                  <span>{name}</span>
-                  {i === 2 && (
-                    <span style={{ fontSize: "0.65rem", color: "var(--primary-light)", background: "rgba(214,26,32,0.15)", border: "1px solid rgba(214,26,32,0.3)", padding: "0.25rem 0.6rem", borderRadius: "4px", fontWeight: 600 }}>
-                      Lihat Screenshot ↗
-                    </span>
-                  )}
+          <p style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginTop: "0.5rem", fontWeight: 500 }}>
+            Fondasi Ekosistem Enterprise
+          </p>
+        </div>
+
+        <div>
+          <h2
+            style={{
+              fontSize: "clamp(1.75rem, 3.8vw, 2.75rem)",
+              fontWeight: 800,
+              lineHeight: 1.2,
+              color: "var(--ink-primary)",
+              letterSpacing: "-0.02em",
+              marginBottom: "1.25rem"
+            }}
+          >
+            Membangun Ekosistem <span style={{ color: "var(--primary)" }}>Digital</span> yang Presisi & Mudah Digunakan
+          </h2>
+
+          <p style={{ fontSize: "0.98rem", lineHeight: 1.8, color: "var(--ink-body)", marginBottom: "1rem" }}>
+            FUSION HUB hadir sebagai pusat solusi integrasi bisnis modern. Kami memahami bahwa sistem enterprise yang
+            kuat tidak boleh rumit bagi penggunanya. Karena itu, setiap antarmuka dirancang bersih, cepat, dan adaptif.
+          </p>
+          <p style={{ fontSize: "0.98rem", lineHeight: 1.8, color: "var(--ink-body)", marginBottom: "2.5rem" }}>
+            Pilih antara pendekatan <strong>Bundle One Solution</strong> yang menyeluruh atau adopsi{" "}
+            <strong>Sistem Modular</strong> untuk membenahi alur kerja departemen secara terukur.
+          </p>
+
+          <div className="pillars-grid">
+            {pillars.map((pillar) => {
+              const IconComponent = pillar.icon;
+              return (
+                <div
+                  key={pillar.name}
+                  style={{
+                    background: "var(--bg-card)",
+                    padding: "1.75rem 1.5rem",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: "14px",
+                    boxShadow: "var(--shadow-sm)",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        width: "44px",
+                        height: "44px",
+                        borderRadius: "10px",
+                        background: pillar.bg,
+                        border: `1px solid ${pillar.border}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: pillar.accent,
+                        marginBottom: "1.25rem"
+                      }}
+                    >
+                      <IconComponent size={22} />
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: "1.1rem",
+                        fontWeight: 700,
+                        color: "var(--ink-primary)",
+                        marginBottom: "0.6rem"
+                      }}
+                    >
+                      {pillar.name}
+                    </h3>
+                    <p style={{ fontSize: "0.86rem", lineHeight: 1.7, color: "var(--ink-body)" }}>{pillar.desc}</p>
+                  </div>
                 </div>
-                
-                <div style={{ fontSize:"0.82rem", lineHeight:1.75, color:"var(--warm-gray)" }}>{desc}</div>
-                
-                <motion.div animate={{ borderColor: activeIdx === i ? "var(--secondary)" : "var(--primary-dim)", color: activeIdx === i ? "var(--secondary-light)" : "var(--primary-light)", background: activeIdx === i ? "rgba(255,102,0,0.1)" : "transparent" }}
-                  style={{ fontSize:"0.58rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", border:"1px solid", borderRadius:"4px", padding:"0.45rem 1rem", whiteSpace:"nowrap", textAlign:"center", transition:"0.3s" }}>
-                  {tag}
-                </motion.div>
-              </motion.div>
-            </FadeUp>
-          ))}
+              );
+            })}
+          </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+/* =========================================================
+   SERVICES SECTION: INTERACTIVE MODULE EXPLORER
+   (All 6 modules always visible + Live Interactive Preview)
+   ========================================================= */
+const MODULES_DATA = [
+  {
+    num: "01",
+    code: "ERP-CORE",
+    name: "Bundle One Solution",
+    tag: "Full Stack ERP",
+    icon: Layers,
+    shortDesc: "Integrasi menyeluruh seluruh departemen dalam satu platform enterprise tersentralisasi.",
+    desc: "Solusi sistem enterprise menyeluruh (ERP) yang menghubungkan HR, Inventory, Produksi, Procurement, dan Keuangan secara real-time dalam satu dashboard eksekutif.",
+    flow: ["Multi-Departemen Input", "Fusion Core Database", "Executive Analytics & Audit"],
+    features: [
+      "Single Sign-On (SSO) & Role-Based Access Control",
+      "Sinkronisasi data antar-divisi otomatis tanpa jeda",
+      "Dashboard eksekutif real-time & laporan konsolidasi",
+      "Skalabilitas penuh untuk multi-cabang & pabrik"
+    ],
+    metricLabel: "Efisiensi Operasional",
+    metricValue: "+45% Lebih Cepat"
+  },
+  {
+    num: "02",
+    code: "MOD-HRIS",
+    name: "HRIS",
+    tag: "Modular",
+    icon: Users,
+    shortDesc: "Manajemen karyawan, payroll otomatis, absensi biometrik, KPI, dan rekrutmen.",
+    desc: "Otomatisasi penuh pengelolaan SDM mulai dari absensi mesin biometrik/mobile, perhitungan lembur & PPh 21, distribusi slip gaji digital, hingga evaluasi KPI tahunan.",
+    flow: ["Biometrik & Mobile Attendance", "Payroll & Tax Engine", "Slip Gaji & Analitik KPI"],
+    features: [
+      "Integrasi langsung mesin absensi & Geolocation",
+      "Kalkulasi otomatis Payroll, BPJS, Lembur & Pajak",
+      "Employee Self-Service (Cuti, Klaim, Reimbursement)",
+      "Pelacakan KPI & penilaian performa terstruktur"
+    ],
+    metricLabel: "Waktu Proses Payroll",
+    metricValue: "Hemat 80% Waktu"
+  },
+  {
+    num: "03",
+    code: "MOD-INSW",
+    name: "IT-Inventory INSW",
+    tag: "Modular · Populer",
+    icon: Database,
+    shortDesc: "Pelacakan mutasi barang, Saldo Awal, Stock Opname, & integrasi pelaporan INSW.",
+    desc: "Sistem IT-Inventory yang dirancang khusus untuk kepatuhan regulasi Kawasan Berikat & INSW: mencakup Saldo Awal, Pemasukan, Pengeluaran, Stock Opname, Adjustment, hingga Cleansing & Pengiriman Live ke portal INSW.",
+    flow: ["Transaksi Gudang & Dokumen", "Cleansing & Validasi INSW", "Live Sync Portal INSW"],
+    features: [
+      "Manajemen Saldo Awal, Pemasukan & Pengeluaran Barang",
+      "Fitur Cleansing INSW & Finalisasi satu klik",
+      "Rekonsiliasi Stock Opname & Adjustment otomatis",
+      "Export Excel standar Bea Cukai & Browser INSW Live"
+    ],
+    metricLabel: "Kepatuhan Regulasi",
+    metricValue: "100% Standar INSW",
+    hasScreenshots: true
+  },
+  {
+    num: "04",
+    code: "MOD-PROD",
+    name: "Production Tracker",
+    tag: "Modular",
+    icon: Activity,
+    shortDesc: "Monitoring jalur produksi real-time, efisiensi mesin (OEE), dan kontrol kualitas.",
+    desc: "Pantau jalannya lini manufaktur dari bahan baku (WIP) hingga barang jadi secara transparan. Identifikasi bottleneck produksi dan tingkatkan skor OEE pabrik Anda.",
+    flow: ["Work Order & Bahan Baku", "Real-Time Line Tracking", "QC Pass & Barang Jadi"],
+    features: [
+      "Pelacakan Work-in-Progress (WIP) per stasiun kerja",
+      "Kalkulasi otomatis Overall Equipment Effectiveness (OEE)",
+      "Pencatatan tingkat defect / Quality Control (QC)",
+      "Integrasi langsung dengan pengurangan stok gudang"
+    ],
+    metricLabel: "Visibilitas Produksi",
+    metricValue: "Real-Time 24/7"
+  },
+  {
+    num: "05",
+    code: "MOD-PROC",
+    name: "ProcureFlow",
+    tag: "Modular",
+    icon: FileText,
+    shortDesc: "Digitalisasi persetujuan PO, manajemen vendor, dan otomasi Procure-to-Pay.",
+    desc: "Hilangkan antrean dokumen kertas dalam pengadaan barang. Kelola Purchase Request (PR), perbandingan harga vendor, multi-level approval PO, hingga pencocokan invoice.",
+    flow: ["Purchase Request (PR)", "Multi-Level Approval PO", "Receiving & Invoice Match"],
+    features: [
+      "Persetujuan PO berjenjang via notifikasi instan",
+      "Database histori harga & evaluasi performa vendor",
+      "Three-Way Matching (PO, Good Receipt, Invoice)",
+      "Kontrol anggaran (Budget Control) per departemen"
+    ],
+    metricLabel: "Siklus Persetujuan PO",
+    metricValue: "3x Lebih Cepat"
+  },
+  {
+    num: "06",
+    code: "MOD-ASSET",
+    name: "Asset Management System",
+    tag: "Modular",
+    icon: Box,
+    shortDesc: "Pencatatan depresiasi, jadwal maintenance, dan QR/Barcode tracking aset fisik.",
+    desc: "Lacak seluruh siklus hidup aset perusahaan mulai dari akuisisi, penempatan lokasi/PIC, jadwal pemeliharaan berkala, hingga perhitungan penyusutan nilai buku.",
+    flow: ["Registrasi & Tagging QR", "Maintenance & Mutasi", "Kalkulasi Depresiasi"],
+    features: [
+      "Audit fisik cepat menggunakan pemindaian QR/Barcode",
+      "Pengingat otomatis jadwal Preventive Maintenance",
+      "Perhitungan depresiasi otomatis (Garis Lurus / Saldo Menurun)",
+      "Riwayat lengkap perpindahan tangan & lokasi aset"
+    ],
+    metricLabel: "Akurasi Audit Aset",
+    metricValue: "99.8% Terlacak"
+  }
+];
+
+function Services({ onChooseModule }) {
+  // Default selected module is index 2 (IT-Inventory INSW) so users immediately see the rich interactive preview + screenshots
+  const [selectedIdx, setSelectedIdx] = useState(2);
+  const [galleryState, setGalleryState] = useState({ open: false, index: 0 });
+
+  const activeModule = MODULES_DATA[selectedIdx];
+  const ActiveIcon = activeModule.icon;
+
+  return (
+    <section
+      id="layanan"
+      style={{
+        background: "var(--bg-subtle)",
+        borderTop: "1px solid var(--border-subtle)",
+        borderBottom: "1px solid var(--border-subtle)"
+      }}
+    >
+      <div className="section-pad">
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            gap: "1.5rem",
+            marginBottom: "3rem"
+          }}
+        >
+          <div>
+            <Eyebrow>Produk & Lini Solusi</Eyebrow>
+            <h2
+              style={{
+                fontSize: "clamp(1.85rem, 4vw, 2.85rem)",
+                fontWeight: 800,
+                color: "var(--ink-primary)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.15
+              }}
+            >
+              Eksplorasi Modul <span style={{ color: "var(--primary)" }}>FUSION HUB</span>
+            </h2>
+          </div>
+          <p style={{ maxWidth: "400px", fontSize: "0.92rem", lineHeight: 1.7, color: "var(--ink-body)" }}>
+            Klik salah satu dari <strong>6 modul di bawah</strong> untuk melihat alur kerja sistem, fitur utama, dan
+            tampilan antarmuka secara interaktif.
+          </p>
+        </div>
+
+        {/* Interactive Split Explorer: Left = All 6 Modules (Always Visible), Right = Live Inspector */}
+        <div className="services-layout">
+          {/* Left Column: All 6 Modules List */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {MODULES_DATA.map((mod, idx) => {
+              const Icon = mod.icon;
+              const isSelected = selectedIdx === idx;
+              return (
+                <button
+                  key={mod.num}
+                  type="button"
+                  onClick={() => setSelectedIdx(idx)}
+                  className={`module-tab-btn ${isSelected ? "active" : ""}`}
+                >
+                  {/* Left active bar */}
+                  {isSelected && (
+                    <motion.div
+                      layoutId="activeModuleBar"
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: "5px",
+                        background: "linear-gradient(to bottom, var(--primary), var(--secondary))"
+                      }}
+                    />
+                  )}
+
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", flex: 1 }}>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.85rem",
+                        fontWeight: 700,
+                        color: isSelected ? "#FFFFFF" : "var(--primary)",
+                        background: isSelected
+                          ? "linear-gradient(135deg, var(--primary), var(--secondary))"
+                          : "var(--primary-light)",
+                        border: isSelected ? "none" : "1px solid var(--primary-border)",
+                        width: "38px",
+                        height: "38px",
+                        borderRadius: "9px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        marginTop: "0.1rem",
+                        transition: "all 0.2s ease"
+                      }}
+                    >
+                      {mod.num}
+                    </div>
+
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", flexWrap: "wrap" }}>
+                        <span
+                          style={{
+                            fontSize: "1.05rem",
+                            fontWeight: 700,
+                            color: "var(--ink-primary)"
+                          }}
+                        >
+                          {mod.name}
+                        </span>
+                        {mod.hasScreenshots && (
+                          <span
+                            style={{
+                              fontSize: "0.65rem",
+                              fontWeight: 700,
+                              color: "var(--secondary)",
+                              background: "var(--secondary-light)",
+                              border: "1px solid var(--secondary-border)",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "99px",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.25rem"
+                            }}
+                          >
+                            <ImageIcon size={11} /> 5 Screenshot
+                          </span>
+                        )}
+                      </div>
+                      <p
+                        style={{
+                          fontSize: "0.82rem",
+                          color: "var(--ink-body)",
+                          marginTop: "0.25rem",
+                          lineHeight: 1.5
+                        }}
+                      >
+                        {mod.shortDesc}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-end",
+                      gap: "0.35rem",
+                      flexShrink: 0
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.62rem",
+                        fontFamily: "var(--font-mono)",
+                        fontWeight: 600,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                        color: isSelected ? "var(--primary)" : "var(--ink-muted)",
+                        background: isSelected ? "var(--primary-light)" : "var(--bg-subtle)",
+                        border: `1px solid ${isSelected ? "var(--primary-border)" : "var(--border-subtle)"}`,
+                        padding: "0.2rem 0.55rem",
+                        borderRadius: "6px"
+                      }}
+                    >
+                      {mod.tag}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Column: Interactive Live Module Inspector */}
+          <div style={{ position: "sticky", top: "5.5rem" }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeModule.num}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.22 }}
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "18px",
+                  padding: "clamp(1.5rem, 3vw, 2.25rem)",
+                  boxShadow: "var(--shadow-lg)",
+                  position: "relative",
+                  overflow: "hidden"
+                }}
+              >
+                {/* Top Accent Strip */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: "4px",
+                    background: "linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)"
+                  }}
+                />
+
+                {/* Module Header */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: "1rem",
+                    marginBottom: "1.25rem",
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                    <div
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        borderRadius: "12px",
+                        background: "linear-gradient(135deg, var(--primary-light), var(--secondary-light))",
+                        border: "1px solid var(--primary-border)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--primary)"
+                      }}
+                    >
+                      <ActiveIcon size={24} />
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "0.7rem",
+                          fontFamily: "var(--font-mono)",
+                          fontWeight: 700,
+                          color: "var(--secondary)",
+                          letterSpacing: "0.08em"
+                        }}
+                      >
+                        MODUL {activeModule.num} // {activeModule.code}
+                      </div>
+                      <h3
+                        style={{
+                          fontSize: "clamp(1.35rem, 2.5vw, 1.65rem)",
+                          fontWeight: 800,
+                          color: "var(--ink-primary)"
+                        }}
+                      >
+                        {activeModule.name}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: "var(--bg-subtle)",
+                      border: "1px solid var(--border-subtle)",
+                      borderRadius: "10px",
+                      padding: "0.45rem 0.85rem",
+                      textAlign: "right"
+                    }}
+                  >
+                    <div style={{ fontSize: "0.65rem", color: "var(--ink-muted)", fontWeight: 600 }}>
+                      {activeModule.metricLabel}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.85rem",
+                        fontWeight: 800,
+                        color: "var(--primary)",
+                        fontFamily: "var(--font-mono)"
+                      }}
+                    >
+                      {activeModule.metricValue}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Full Description */}
+                <p
+                  style={{
+                    fontSize: "0.92rem",
+                    lineHeight: 1.75,
+                    color: "var(--ink-body)",
+                    marginBottom: "1.5rem"
+                  }}
+                >
+                  {activeModule.desc}
+                </p>
+
+                {/* Animated Interactive Architecture Pipeline */}
+                <div
+                  style={{
+                    background: "var(--bg-subtle)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: "12px",
+                    padding: "1rem",
+                    marginBottom: "1.5rem"
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.68rem",
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      color: "var(--ink-muted)",
+                      marginBottom: "0.75rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem"
+                    }}
+                  >
+                    <Sparkles size={13} color="var(--secondary)" /> Alur Integrasi Data Otomatis
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+                      gap: "0.5rem",
+                      alignItems: "center"
+                    }}
+                  >
+                    {activeModule.flow.map((step, i) => (
+                      <div
+                        key={step}
+                        style={{
+                          background: "#FFFFFF",
+                          border: i === 1 ? "1px solid var(--secondary-border)" : "1px solid var(--border-subtle)",
+                          borderRadius: "8px",
+                          padding: "0.6rem 0.75rem",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          boxShadow: "var(--shadow-sm)"
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "50%",
+                            background: i === 1 ? "var(--secondary)" : "var(--primary-light)",
+                            color: i === 1 ? "#FFFFFF" : "var(--primary)",
+                            fontSize: "0.68rem",
+                            fontWeight: 700,
+                            fontFamily: "var(--font-mono)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0
+                          }}
+                        >
+                          {i + 1}
+                        </span>
+                        <span style={{ fontSize: "0.76rem", fontWeight: 600, color: "var(--ink-primary)" }}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Key Features Checklist */}
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <div
+                    style={{
+                      fontSize: "0.72rem",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      color: "var(--ink-muted)",
+                      marginBottom: "0.75rem"
+                    }}
+                  >
+                    Kapabilitas Utama Modul:
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.55rem" }}>
+                    {activeModule.features.map((feat) => (
+                      <div
+                        key={feat}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.65rem",
+                          fontSize: "0.86rem",
+                          color: "var(--ink-secondary)",
+                          fontWeight: 500
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: "18px",
+                            height: "18px",
+                            borderRadius: "50%",
+                            background: "var(--primary-light)",
+                            color: "var(--primary)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0
+                          }}
+                        >
+                          <Check size={12} strokeWidth={3} />
+                        </span>
+                        {feat}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Interactive Screenshot Strip if IT-Inventory INSW */}
+                {activeModule.hasScreenshots && (
+                  <div
+                    style={{
+                      background: "linear-gradient(135deg, #FFF7ED 0%, #FFF1F2 100%)",
+                      border: "1px solid var(--secondary-border)",
+                      borderRadius: "12px",
+                      padding: "1rem",
+                      marginBottom: "1.5rem"
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "0.75rem",
+                        flexWrap: "wrap",
+                        gap: "0.5rem"
+                      }}
+                    >
+                      <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--ink-primary)" }}>
+                        Preview Antarmuka Web IT-Inventory INSW:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setGalleryState({ open: true, index: 0 })}
+                        style={{
+                          background: "var(--primary)",
+                          color: "#FFFFFF",
+                          border: "none",
+                          borderRadius: "6px",
+                          padding: "0.35rem 0.75rem",
+                          fontSize: "0.72rem",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.35rem"
+                        }}
+                      >
+                        <ImageIcon size={13} /> Perbesar Semua (5 Foto)
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(5, 1fr)",
+                        gap: "0.5rem"
+                      }}
+                    >
+                      {INVENTORY_IMAGES.map((img, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setGalleryState({ open: true, index: i })}
+                          title={img.title}
+                          style={{
+                            aspectRatio: "16 / 10",
+                            backgroundImage: `url(${img.src})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            borderRadius: "6px",
+                            border: "1.5px solid #FFFFFF",
+                            boxShadow: "var(--shadow-sm)",
+                            cursor: "pointer",
+                            transition: "transform 0.15s ease"
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom Action Bar */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "0.75rem",
+                    paddingTop: "1.25rem",
+                    borderTop: "1px solid var(--border-subtle)"
+                  }}
+                >
+                  <a
+                    href="#kontak"
+                    onClick={() => onChooseModule && onChooseModule(activeModule.name)}
+                    style={{
+                      flex: 1,
+                      minWidth: "200px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.5rem",
+                      textDecoration: "none",
+                      background: "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)",
+                      color: "#FFFFFF",
+                      fontSize: "0.82rem",
+                      fontWeight: 700,
+                      padding: "0.85rem 1.25rem",
+                      borderRadius: "10px",
+                      boxShadow: "var(--shadow-accent)"
+                    }}
+                  >
+                    Jadwalkan Demo {activeModule.name}
+                    <ArrowRight size={16} />
+                  </a>
+
+                  {!activeModule.hasScreenshots && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedIdx(2);
+                        setGalleryState({ open: true, index: 0 });
+                      }}
+                      style={{
+                        background: "var(--bg-subtle)",
+                        border: "1px solid var(--border-strong)",
+                        color: "var(--ink-secondary)",
+                        fontSize: "0.78rem",
+                        fontWeight: 600,
+                        padding: "0.85rem 1.1rem",
+                        borderRadius: "10px",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.4rem"
+                      }}
+                    >
+                      <ImageIcon size={15} color="var(--secondary)" /> Lihat Contoh UI INSW
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+
+      {/* Fullscreen Lightbox Modal */}
       <AnimatePresence>
-        {showGallery && (
+        {galleryState.open && (
           <GalleryModal
-            images={[inventory1, inventory2, inventory3, inventory4, inventory5]}
-            onClose={() => setShowGallery(false)}
+            images={INVENTORY_IMAGES}
+            initialIndex={galleryState.index}
+            onClose={() => setGalleryState({ open: false, index: 0 })}
           />
         )}
       </AnimatePresence>
@@ -626,93 +1721,274 @@ function Services() {
   );
 }
 
-function Marquee() {
-  const items = ["HRsystem","IT-Inventory","Production Tracker","ProcureFlow","Asset Management","Bundle One Solution","Enterprise ERP","Digital Transformation"];
-  const doubled = [...items, ...items, ...items];
-  return (
-    <div style={{ padding:"clamp(2.2rem, 5vw, 3.5rem) 0", overflow:"hidden", borderTop:"1px solid rgba(214,26,32,0.1)", borderBottom:"1px solid rgba(214,26,32,0.1)", background:"var(--bg0)" }}>
-      <motion.div animate={{ x: [0, "-50%"] }} transition={{ duration:35, repeat:Infinity, ease:"linear" }}
-        style={{ display:"flex", gap:"clamp(2.5rem, 6vw, 4rem)", whiteSpace:"nowrap", willChange:"transform" }}>
-        {doubled.map((item, i) => (
-          <span key={i} style={{ display:"inline-flex", alignItems:"center", gap:"clamp(2.5rem, 6vw, 4rem)", fontSize:"clamp(0.95rem, 2.5vw, 1.2rem)", fontWeight:700, color:"var(--muted)", flexShrink:0 }}>
-            {item}
-            <span style={{ width:"6px", height:"6px", borderRadius:"50%", background:"var(--secondary-light)", display:"inline-block" }} />
-          </span>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
-
+/* =========================================================
+   PROCESS SECTION: INTERACTIVE IMPLEMENTATION ROADMAP
+   ========================================================= */
 function Process() {
+  const [activeStep, setActiveStep] = useState(0);
+
   const steps = [
-    ["I","Audit Sistem Lama","Kami menganalisis pain-points dan workflow di sistem berjalan Anda."],
-    ["II","Pemilihan Modul","Rekomendasi adaptasi Bundle One Solution atau kombinasi modular yang tepat."],
-    ["III","Integrasi & Migrasi","Pemasangan sistem yang seamless dengan migrasi data tanpa mengganggu operasional."],
-    ["IV","Training & Support","Pelatihan komprehensif bagi user dan dukungan SLA tingkat tinggi 24/7."],
+    {
+      num: "01",
+      roman: "I",
+      name: "Audit Sistem & Gap Analysis",
+      duration: "Minggu 1",
+      desc: "Kami memetakan alur kerja berjalan, mengidentifikasi titik hambat (pain-points), serta mengevaluasi kesiapan struktur data Anda.",
+      deliverable: "Dokumen Blueprint Arsitektur"
+    },
+    {
+      num: "02",
+      roman: "II",
+      name: "Konfigurasi Modul & Kustomisasi",
+      duration: "Minggu 2–3",
+      desc: "Penyesuaian parameter Bundle One Solution atau modul pilihan agar presisi mengikuti SOP dan regulasi industri perusahaan Anda.",
+      deliverable: "Staging & Sandbox Environment"
+    },
+    {
+      num: "03",
+      roman: "III",
+      name: "Integrasi & Migrasi Data",
+      duration: "Minggu 4",
+      desc: "Proses cleansing dan pemindahan saldo awal/data historis secara aman ke server produksi tanpa menghentikan operasional harian.",
+      deliverable: "Zero-Downtime Data Cutover"
+    },
+    {
+      num: "04",
+      roman: "IV",
+      name: "Pelatihan User & Go-Live SLA",
+      duration: "Ongoing 24/7",
+      desc: "Pendampingan intensif bagi tim operasional dan dukungan teknis berkelanjutan dengan jaminan SLA tingkat enterprise.",
+      deliverable: "Sertifikasi User & Support 24/7"
+    }
   ];
+
+  const progressPercentage = ((activeStep + 1) / steps.length) * 100;
+
   return (
-    <section id="proses" style={{ padding:"clamp(4.5rem, 8vw, 9rem) clamp(1.25rem, 4vw, 5rem)", maxWidth:"1400px", margin:"0 auto" }}>
-      <FadeUp>
-        <Eyebrow>Alur Implementasi</Eyebrow>
-        <h2 style={{ fontSize:"clamp(1.8rem, 4.5vw, 3.2rem)", fontWeight:800, color:"var(--ivory)", marginBottom:"clamp(2.5rem, 6vw, 4.5rem)" }}>
-          Migrasi yang <span style={{ color:"var(--primary)" }}>Mulus</span> & Efisien
-        </h2>
-      </FadeUp>
+    <section id="proses" className="section-pad">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          gap: "1.5rem",
+          marginBottom: "2.5rem"
+        }}
+      >
+        <div>
+          <Eyebrow>Alur Implementasi</Eyebrow>
+          <h2
+            style={{
+              fontSize: "clamp(1.85rem, 4vw, 2.75rem)",
+              fontWeight: 800,
+              color: "var(--ink-primary)",
+              letterSpacing: "-0.02em"
+            }}
+          >
+            Migrasi Sistem yang <span style={{ color: "var(--primary)" }}>Terukur</span> & TanpaHambatan
+          </h2>
+        </div>
+
+        {/* Interactive Progress Bar Pill */}
+        <div
+          style={{
+            background: "var(--bg-subtle)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "12px",
+            padding: "0.75rem 1.15rem",
+            minWidth: "240px"
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              fontFamily: "var(--font-mono)",
+              color: "var(--ink-secondary)",
+              marginBottom: "0.4rem"
+            }}
+          >
+            <span>TAHAP {activeStep + 1} DARI 4</span>
+            <span style={{ color: "var(--primary)" }}>{progressPercentage}% READY</span>
+          </div>
+          <div
+            style={{
+              width: "100%",
+              height: "6px",
+              background: "var(--border-subtle)",
+              borderRadius: "99px",
+              overflow: "hidden"
+            }}
+          >
+            <motion.div
+              animate={{ width: `${progressPercentage}%` }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              style={{
+                height: "100%",
+                background: "linear-gradient(90deg, var(--primary), var(--secondary))",
+                borderRadius: "99px"
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="process-grid">
-        <div className="process-line" />
-        {steps.map(([num, name, desc], i) => (
-          <FadeUp key={num} delay={i * 0.12}>
-            <motion.div whileHover={{ y:-4 }} transition={{ duration:0.3 }}
-              style={{ padding:"0 1rem", textAlign:"center", position:"relative", cursor:"default" }}>
-              <motion.div whileHover={{ borderColor:"var(--secondary)", background:"var(--bg2)", color:"var(--secondary)" }}
-                style={{ width:"56px", height:"56px", borderRadius:"50%", border:"2px solid var(--primary-dim)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 1.5rem", background:"var(--bg1)", fontSize:"1.1rem", fontWeight:800, color:"var(--primary-light)", position:"relative", zIndex:1, transition:"all 0.3s" }}>
-                {num}
-              </motion.div>
-              <div style={{ fontSize:"1.05rem", fontWeight:700, color:"var(--ivory)", marginBottom:"0.6rem" }}>{name}</div>
-              <div style={{ fontSize:"0.8rem", lineHeight:1.75, color:"var(--warm-gray)" }}>{desc}</div>
-            </motion.div>
-          </FadeUp>
-        ))}
+        {steps.map((step, i) => {
+          const isCurrent = activeStep === i;
+          const isPassed = i <= activeStep;
+          return (
+            <div
+              key={step.num}
+              onClick={() => setActiveStep(i)}
+              onMouseEnter={() => setActiveStep(i)}
+              style={{
+                background: isCurrent ? "#FFFFFF" : "var(--bg-subtle)",
+                border: isCurrent ? "1.5px solid var(--primary)" : "1px solid var(--border-subtle)",
+                borderRadius: "16px",
+                padding: "1.6rem 1.4rem",
+                cursor: "pointer",
+                transition: "all 0.22s ease",
+                boxShadow: isCurrent ? "var(--shadow-md)" : "none",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                position: "relative"
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1.25rem"
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "12px",
+                      background: isPassed
+                        ? "linear-gradient(135deg, var(--primary), var(--secondary))"
+                        : "#FFFFFF",
+                      border: isPassed ? "none" : "1px solid var(--border-strong)",
+                      color: isPassed ? "#FFFFFF" : "var(--ink-muted)",
+                      fontWeight: 800,
+                      fontSize: "0.95rem",
+                      fontFamily: "var(--font-mono)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.25s ease"
+                    }}
+                  >
+                    {step.roman}
+                  </div>
+                  <span
+                    style={{
+                      fontSize: "0.68rem",
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 600,
+                      color: isCurrent ? "var(--secondary)" : "var(--ink-muted)",
+                      background: isCurrent ? "var(--secondary-light)" : "#FFFFFF",
+                      border: `1px solid ${isCurrent ? "var(--secondary-border)" : "var(--border-subtle)"}`,
+                      padding: "0.2rem 0.6rem",
+                      borderRadius: "99px"
+                    }}
+                  >
+                    {step.duration}
+                  </span>
+                </div>
+
+                <h3
+                  style={{
+                    fontSize: "1.08rem",
+                    fontWeight: 700,
+                    color: "var(--ink-primary)",
+                    marginBottom: "0.6rem"
+                  }}
+                >
+                  {step.name}
+                </h3>
+                <p style={{ fontSize: "0.84rem", lineHeight: 1.7, color: "var(--ink-body)", marginBottom: "1.25rem" }}>
+                  {step.desc}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  paddingTop: "0.85rem",
+                  borderTop: "1px dashed var(--border-strong)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.45rem",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  color: isCurrent ? "var(--primary)" : "var(--ink-secondary)"
+                }}
+              >
+                <ShieldCheck size={15} color={isCurrent ? "var(--primary)" : "var(--ink-muted)"} />
+                <span>Output: {step.deliverable}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
 }
 
-function Manifesto() {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset:["start end","end start"] });
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.94, 1, 0.94]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  return (
-    <div ref={ref} style={{ padding:"clamp(4.5rem, 8vw, 9rem) clamp(1.25rem, 4vw, 5rem)", textAlign:"center", background:"var(--bg0)", position:"relative", overflow:"hidden" }}>
-      <motion.div animate={{ scale:[1,1.3,1], opacity:[0.1,0.2,0.1] }} transition={{ duration:9, repeat:Infinity }}
-        style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", width:"min(700px, 90vw)", height:"min(400px, 60vw)", borderRadius:"50%", background:"radial-gradient(ellipse, rgba(214,26,32,0.1) 0%, transparent 70%)", pointerEvents:"none" }} />
-      <motion.div style={{ scale, opacity, maxWidth:"850px", margin:"0 auto", position:"relative" }}>
-        <p style={{ fontSize:"clamp(1.15rem, 3.5vw, 2.2rem)", fontWeight:600, color:"var(--ivory)", lineHeight:1.65, marginBottom:"2rem" }}>
-          "Teknologi sejati adalah ketika sistem yang kompleks bersembunyi di balik <span style={{ color:"var(--secondary)" }}>kemudahan penggunaan</span>, dan modularitas menjadi katalis bagi skala bisnis Anda."
-        </p>
-        <div style={{ width:"50px", height:"2px", background:"var(--primary-dim)", margin:"0 auto 1.25rem" }} />
-        <div style={{ fontSize:"0.65rem", fontWeight:700, letterSpacing:"0.25em", textTransform:"uppercase", color:"var(--muted)" }}>— FUSION HUB Manifesto</div>
-      </motion.div>
-    </div>
-  );
-}
-
-function Field({ label, placeholder, type="text", value, onChange }) {
+/* =========================================================
+   CONTACT / REQUEST DEMO SECTION
+   ========================================================= */
+function Field({ label, placeholder, type = "text", value, onChange }) {
   return (
     <div>
-      <label style={{ display:"block", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)", marginBottom:"0.5rem" }}>{label}</label>
-      <motion.input type={type} placeholder={placeholder} value={value} onChange={onChange}
-        whileFocus={{ borderColor:"var(--primary)", background:"var(--bg2)" }}
-        style={{ width:"100%", background:"var(--bg1)", border:"1px solid rgba(214,26,32,0.2)", borderRadius:"6px", color:"var(--cream)", fontFamily:"inherit", fontSize:"0.95rem", padding:"0.9rem 1rem", outline:"none", transition:"all 0.3s" }} />
+      <label
+        style={{
+          display: "block",
+          fontSize: "0.7rem",
+          fontWeight: 700,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          color: "var(--ink-secondary)",
+          marginBottom: "0.45rem"
+        }}
+      >
+        {label}
+      </label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className="form-input"
+      />
     </div>
   );
 }
 
-function Contact() {
+function Contact({ selectedModuleFromServices }) {
   const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({ name: "", role: "", company: "", phone: "", module: "Bundle One Solution", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    role: "",
+    company: "",
+    phone: "",
+    module: "Bundle One Solution",
+    message: ""
+  });
+
+  useEffect(() => {
+    if (selectedModuleFromServices) {
+      setForm((prev) => ({ ...prev, module: selectedModuleFromServices }));
+    }
+  }, [selectedModuleFromServices]);
 
   const handleSend = (e) => {
     if (e) e.preventDefault();
@@ -721,8 +1997,7 @@ function Contact() {
       return;
     }
 
-    const messageTemplate = 
-`Halo Tim FUSION HUB! 👋
+    const messageTemplate = `Halo Tim FUSION HUB! 👋
 Saya ingin mengajukan *Request Demo* sistem.
 
 📋 *Data Calon Klien:*
@@ -741,80 +2016,276 @@ Mohon informasi ketersediaan jadwal demo. Terima kasih!`;
 
     const waNumber = "62895321643665";
     const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(messageTemplate)}`;
-    
+
     window.open(waUrl, "_blank");
     setSent(true);
   };
+
   return (
-    <section id="kontak" style={{ background:"var(--bg2)" }}>
+    <section
+      id="kontak"
+      style={{
+        background: "linear-gradient(180deg, var(--bg-subtle) 0%, #FFFFFF 100%)",
+        borderTop: "1px solid var(--border-subtle)"
+      }}
+    >
       <div className="contact-container">
-        <div className="contact-info-col">
-          <FadeUp>
-            <Eyebrow>Konsultasi IT</Eyebrow>
-            <h2 style={{ fontSize:"clamp(1.8rem, 4.5vw, 3.2rem)", fontWeight:800, color:"var(--ivory)", marginBottom:"1.25rem" }}>
-              Jadwalkan <span style={{ color:"var(--secondary)" }}>Demo</span><br />Sekarang
-            </h2>
-            <p style={{ fontSize:"0.9rem", lineHeight:1.8, color:"var(--warm-gray)", marginBottom:"2rem", maxWidth:"90%" }}>
-              Diskusikan arsitektur IT ideal bagi Anda. Tim ahli FUSION HUB siap melakukan audit awal secara gratis.
-            </p>
-          </FadeUp>
+        {/* Left Info Column */}
+        <div>
+          <Eyebrow>Konsultasi & Demo Sistem</Eyebrow>
+          <h2
+            style={{
+              fontSize: "clamp(1.85rem, 4vw, 2.85rem)",
+              fontWeight: 800,
+              color: "var(--ink-primary)",
+              lineHeight: 1.15,
+              letterSpacing: "-0.02em",
+              marginBottom: "1.15rem"
+            }}
+          >
+            Jadwalkan <span style={{ color: "var(--primary)" }}>Live Demo</span> Bersama Solution Architect Kami
+          </h2>
+          <p style={{ fontSize: "0.95rem", lineHeight: 1.75, color: "var(--ink-body)", marginBottom: "2rem" }}>
+            Diskusikan arsitektur IT yang paling tepat untuk operasional perusahaan Anda. Tim teknis FUSION HUB siap
+            memberikan sesi demo langsung dan audit kebutuhan awal tanpa biaya.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {[
+              [
+                "Sesi Demo Kustom",
+                "Demo difokuskan langsung pada alur kerja & studi kasus spesifik industri Anda."
+              ],
+              [
+                "Konsultasi Regulasi INSW",
+                "Diskusi teknis kesiapan integrasi IT-Inventory untuk Kawasan Berikat."
+              ],
+              [
+                "Estimasi Transparan",
+                "Rekomendasi skema implementasi modular atau Full ERP sesuai skala perusahaan."
+              ]
+            ].map(([title, desc]) => (
+              <div
+                key={title}
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "12px",
+                  padding: "1rem 1.2rem",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.85rem",
+                  boxShadow: "var(--shadow-sm)"
+                }}
+              >
+                <CheckCircle2 size={19} color="var(--secondary)" style={{ flexShrink: 0, marginTop: "0.15rem" }} />
+                <div>
+                  <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--ink-primary)" }}>{title}</div>
+                  <div style={{ fontSize: "0.8rem", color: "var(--ink-body)", marginTop: "0.15rem" }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="contact-form-col">
-          <FadeUp>
-            <div style={{ fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--muted)", marginBottom:"2rem", display:"flex", alignItems:"center", gap:"0.75rem" }}>
-              Request Demo <span style={{ display:"block", width:"24px", height:"1px", background:"var(--muted)" }} />
-            </div>
-          </FadeUp>
+
+        {/* Right Form Card */}
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "18px",
+            padding: "clamp(1.5rem, 3.5vw, 2.5rem)",
+            boxShadow: "var(--shadow-lg)"
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.72rem",
+              fontFamily: "var(--font-mono)",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--primary)",
+              marginBottom: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingBottom: "0.85rem",
+              borderBottom: "1px solid var(--border-subtle)"
+            }}
+          >
+            <span>FORMULIR REQUEST DEMO</span>
+            <span style={{ color: "var(--ink-muted)" }}>DIRECT WHATSAPP</span>
+          </div>
+
           <AnimatePresence mode="wait">
             {sent ? (
-              <motion.div key="ok" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}
-                style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", minHeight:"380px", gap:"1.25rem" }}>
-                <motion.div animate={{ scale:[1,1.1,1] }} transition={{ duration:1, repeat:2 }}
-                  style={{ width:"64px", height:"64px", borderRadius:"50%", border:"2px solid var(--secondary)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.8rem", color:"var(--secondary)" }}>✓</motion.div>
-                <p style={{ fontSize:"1.8rem", fontWeight:800, color:"var(--ivory)", textAlign:"center" }}>Request Terkirim!</p>
-                <p style={{ fontSize:"0.88rem", color:"var(--warm-gray)", textAlign:"center", lineHeight:1.75 }}>Solution Architect kami akan menghubungi Anda<br/>untuk mengatur jadwal demo.</p>
-                <button onClick={() => setSent(false)} data-hover
-                  style={{ background:"transparent", border:"1px solid var(--muted)", borderRadius:"6px", color:"var(--warm-gray)", fontSize:"0.68rem", fontWeight:700, letterSpacing:"0.18em", textTransform:"uppercase", padding:"0.9rem 2.2rem", cursor:"pointer", marginTop:"1rem", transition:"0.3s" }}>
-                  Kirim Lagi
+              <motion.div
+                key="ok"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: "340px",
+                  gap: "1rem",
+                  textAlign: "center"
+                }}
+              >
+                <div
+                  style={{
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "50%",
+                    background: "var(--secondary-light)",
+                    border: "2px solid var(--secondary)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--secondary)"
+                  }}
+                >
+                  <Check size={28} strokeWidth={3} />
+                </div>
+                <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--ink-primary)" }}>
+                  Format Pesan Siap Dikirim!
+                </h3>
+                <p style={{ fontSize: "0.9rem", color: "var(--ink-body)", lineHeight: 1.7, maxWidth: "360px" }}>
+                  Anda telah diarahkan ke WhatsApp tim FUSION HUB. Silakan tekan tombol kirim pada aplikasi WhatsApp
+                  Anda.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSent(false)}
+                  style={{
+                    background: "var(--bg-subtle)",
+                    border: "1px solid var(--border-strong)",
+                    borderRadius: "8px",
+                    color: "var(--ink-primary)",
+                    fontSize: "0.78rem",
+                    fontWeight: 700,
+                    padding: "0.75rem 1.75rem",
+                    cursor: "pointer",
+                    marginTop: "0.5rem"
+                  }}
+                >
+                  Ubah Data / Kirim Ulang
                 </button>
               </motion.div>
             ) : (
-              <motion.div key="form" initial={{ opacity:0 }} animate={{ opacity:1 }}>
-                <FadeUp delay={0.1}>
-                  <div className="contact-row">
-                    <Field label="Nama Lengkap" placeholder="John Doe" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-                    <Field label="Posisi / Jabatan" placeholder="CTO, Manager..." value={form.role} onChange={e => setForm({...form, role: e.target.value})} />
+              <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSend}>
+                <div className="contact-row">
+                  <Field
+                    label="Nama Lengkap *"
+                    placeholder="Budi Santoso"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  />
+                  <Field
+                    label="Posisi / Jabatan"
+                    placeholder="IT Manager, Direktur..."
+                    value={form.role}
+                    onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1.15rem" }}>
+                  <Field
+                    label="Nama Perusahaan"
+                    placeholder="PT Teknologi Nusantara"
+                    value={form.company}
+                    onChange={(e) => setForm({ ...form, company: e.target.value })}
+                  />
+                </div>
+
+                <div className="contact-row">
+                  <Field
+                    label="Nomor WhatsApp Aktif"
+                    placeholder="08xx-xxxx-xxxx"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  />
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "0.7rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        color: "var(--ink-secondary)",
+                        marginBottom: "0.45rem"
+                      }}
+                    >
+                      Modul Diminati
+                    </label>
+                    <select
+                      value={form.module}
+                      onChange={(e) => setForm({ ...form, module: e.target.value })}
+                      className="form-input"
+                    >
+                      <option>Bundle One Solution</option>
+                      <option>HRIS</option>
+                      <option>IT-Inventory INSW</option>
+                      <option>Production Tracker</option>
+                      <option>ProcureFlow</option>
+                      <option>Asset Management System</option>
+                    </select>
                   </div>
-                  <div style={{ marginBottom:"1.2rem" }}>
-                    <Field label="Nama Perusahaan" placeholder="PT Teknologi Nusantara" value={form.company} onChange={e => setForm({...form, company: e.target.value})} />
-                  </div>
-                  <div className="contact-row">
-                    <Field label="Nomor WhatsApp" placeholder="08xx-xxxx-xxxx" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
-                    <div>
-                      <label style={{ display:"block", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)", marginBottom:"0.5rem" }}>Modul Diminati</label>
-                      <select value={form.module} onChange={e => setForm({...form, module: e.target.value})} style={{ width:"100%", background:"var(--bg1)", border:"1px solid rgba(214,26,32,0.2)", borderRadius:"6px", color:"var(--cream)", fontFamily:"inherit", fontSize:"0.95rem", padding:"0.9rem 1rem", outline:"none" }}>
-                        <option>Bundle One Solution</option>
-                        <option>HRIS</option>
-                        <option>IT-Inventory INSW</option>
-                        <option>Production Tracker</option>
-                        <option>ProcureFlow</option>
-                        <option>Asset Management</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div style={{ marginBottom:"1.8rem" }}>
-                    <label style={{ display:"block", fontSize:"0.6rem", fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)", marginBottom:"0.5rem" }}>Pesan / Pertanyaan Tambahan</label>
-                    <motion.textarea rows={4} placeholder="Jelaskan kebutuhan spesifik atau kendala sistem saat ini..." value={form.message} onChange={e => setForm({...form, message: e.target.value})}
-                      whileFocus={{ borderColor:"var(--primary)", background:"var(--bg2)" }}
-                      style={{ width:"100%", background:"var(--bg1)", border:"1px solid rgba(214,26,32,0.2)", borderRadius:"6px", color:"var(--cream)", fontFamily:"inherit", fontSize:"0.95rem", padding:"0.9rem 1rem", outline:"none", resize:"none", transition:"all 0.3s" }} />
-                  </div>
-                  <motion.button whileHover={{ background:"var(--secondary)", color:"var(--cream)" }} whileTap={{ scale:0.98 }}
-                    onClick={handleSend} data-hover
-                    style={{ width:"100%", background:"var(--primary)", border:"none", borderRadius:"6px", color:"#fff", fontFamily:"inherit", fontSize:"0.7rem", fontWeight:800, letterSpacing:"0.18em", textTransform:"uppercase", padding:"1.1rem", cursor:"pointer", transition:"all 0.3s" }}>
-                    Kirim Request Demo →
-                  </motion.button>
-                </FadeUp>
-              </motion.div>
+                </div>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      color: "var(--ink-secondary)",
+                      marginBottom: "0.45rem"
+                    }}
+                  >
+                    Catatan / Kebutuhan Spesifik
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Ceritakan singkat kebutuhan integrasi atau kendala sistem Anda saat ini..."
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    className="form-input"
+                    style={{ resize: "vertical" }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    width: "100%",
+                    background: "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)",
+                    border: "none",
+                    borderRadius: "10px",
+                    color: "#FFFFFF",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                    padding: "1rem 1.5rem",
+                    cursor: "pointer",
+                    boxShadow: "var(--shadow-accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                    transition: "transform 0.15s ease"
+                  }}
+                >
+                  Kirim Request Demo via WhatsApp
+                  <ArrowRight size={17} />
+                </button>
+              </motion.form>
             )}
           </AnimatePresence>
         </div>
@@ -823,37 +2294,74 @@ Mohon informasi ketersediaan jadwal demo. Terima kasih!`;
   );
 }
 
+/* =========================================================
+   FOOTER
+   ========================================================= */
 function Footer() {
   return (
-    <footer className="footer-container">
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-        <div style={{ fontWeight:800, fontSize:"1.1rem", letterSpacing:"0.2em", color:"var(--primary)" }}>FUSION<span style={{ color:"var(--secondary)" }}>HUB</span></div>
-        <div style={{ fontSize:"0.55rem", fontWeight:600, letterSpacing:"0.15em", textTransform:"uppercase", color:"var(--muted)" }}>Integrated Business Solutions</div>
-      </div>
-      <div style={{ fontSize:"0.72rem", fontWeight:500, letterSpacing:"0.08em", color:"var(--muted)", textAlign:"center" }}>© 2024 FUSION HUB · All rights reserved</div>
-      <div className="footer-links">
-        {["API Docs","Privacy Policy","Terms","Careers"].map(l => (
-          <motion.a key={l} href="#" whileHover={{ color:"var(--secondary-light)" }} data-hover
-            style={{ fontSize:"0.68rem", fontWeight:600, letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--muted)", textDecoration:"none", transition:"0.2s" }}>{l}</motion.a>
-        ))}
+    <footer style={{ background: "#FFFFFF", borderTop: "1px solid var(--border-subtle)" }}>
+      <div className="footer-container">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: " inherit" }}>
+          <LogoAnimation size={34} />
+          <div style={{ textAlign: "left" }}>
+            <div style={{ fontWeight: 800, fontSize: "1rem", letterSpacing: "0.14em", color: "var(--ink-primary)" }}>
+              FUSION<span style={{ color: "var(--primary)" }}>HUB</span>
+            </div>
+            <div
+              style={{
+                fontSize: "0.55rem",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--ink-muted)"
+              }}
+            >
+              Integrated Business Solutions
+            </div>
+          </div>
+        </div>
+
+        <div style={{ fontSize: "0.78rem", color: "var(--ink-muted)", fontWeight: 500 }}>
+          © {new Date().getFullYear()} FUSION HUB · All rights reserved
+        </div>
+
+        <div className="footer-links">
+          {["Tentang", "Lini Solusi", "Implementasi", "Kontak"].map((label, idx) => {
+            const hrefs = ["#tentang", "#layanan", "#proses", "#kontak"];
+            return (
+              <a
+                key={label}
+                href={hrefs[idx]}
+                style={{
+                  fontSize: "0.76rem",
+                  fontWeight: 600,
+                  color: "var(--ink-secondary)",
+                  textDecoration: "none"
+                }}
+              >
+                {label}
+              </a>
+            );
+          })}
+        </div>
       </div>
     </footer>
   );
 }
 
 export default function App() {
+  const [selectedModule, setSelectedModule] = useState("Bundle One Solution");
+
   return (
     <>
-      <Cursor />
       <Nav />
-      <Hero />
-      <Divider />
-      <About />
-      <Services />
-      <Marquee />
-      <Process />
-      <Manifesto />
-      <Contact />
+      <main>
+        <Hero onSelectModuleForDemo={setSelectedModule} />
+        <About />
+        <Services onChooseModule={setSelectedModule} />
+        <Process />
+        <Contact selectedModuleFromServices={selectedModule} />
+      </main>
       <Footer />
     </>
   );
